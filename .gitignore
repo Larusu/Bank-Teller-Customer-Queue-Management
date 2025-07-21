@@ -30,33 +30,3 @@
 *.exe
 *.out
 *.app
-
-# Build Directories
-Debug/
-Release/
-x64/
-x86/
-ipch/
-bin/
-obj/
-
-# Visual Studio Files
-.vs/
-*.VC.db
-*.VC.VC.opendb
-*.user
-*.suo
-*.ncb
-*.sln.docstates
-*.vcxproj
-*.vcxproj.filters
-
-# Backup and Temp Files
-*.bak
-*.tmp
-*.log
-<<<<<<< HEAD
-*.swp
-=======
-*.swp
->>>>>>> 183226d2ccdda3cefc7e01706239f97538de3ea8
