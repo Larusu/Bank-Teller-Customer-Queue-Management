@@ -55,4 +55,8 @@ obj/
 *.bak
 *.tmp
 *.log
+<<<<<<< HEAD
 *.swp
+=======
+*.swp
+>>>>>>> 183226d2ccdda3cefc7e01706239f97538de3ea8
