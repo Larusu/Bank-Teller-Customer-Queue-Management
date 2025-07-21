@@ -30,3 +30,29 @@
 *.exe
 *.out
 *.app
+
+# Build Directories
+Debug/
+Release/
+x64/
+x86/
+ipch/
+bin/
+obj/
+
+# Visual Studio Files
+.vs/
+*.VC.db
+*.VC.VC.opendb
+*.user
+*.suo
+*.ncb
+*.sln.docstates
+*.vcxproj
+*.vcxproj.filters
+
+# Backup and Temp Files
+*.bak
+*.tmp
+*.log
+*.swp
