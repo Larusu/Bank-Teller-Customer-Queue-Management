@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include <queue>
 #include <string>
+#include <fstream>
 
 // Handles queue logic: adding, serving, and listing customers.
 class QueueManager 
@@ -11,7 +12,8 @@ private:
     std::queue<Customer> regularQueue;
     int customerCounter = 0;
     int peakQueueLength = 0;
-
+private:
+    bool isVip(const std::string& name);
 public:
     Customer createCustomer(const std::string& name, int age, const std::string& transactionType); // Creates a Customer object with generated ID and ETA.
     void addCustomer(const Customer& customer);     // Adds a customer to the queue.

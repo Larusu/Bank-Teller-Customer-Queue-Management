@@ -51,7 +51,13 @@ void AppController::handleAddCustomer()
 
 void AppController::handleServeCustomer()
 {
-
+	Customer customer = queueManager.serveCustomer();
+	if (customer.id == 0)
+	{
+		cout << "Queue is empty. Insert a customer first." << endl; 
+		return;
+	}
+	cout << "Now serving: " << customer.name << " (ID: " << customer.id << ")" << endl;
 }
 
 void AppController::handleDisplayQueue()

@@ -60,23 +60,29 @@ string Utils::inputString(const string& prompt)
 
 	cout << prompt;
 
-	while (!(cin >> input))
+	while (true)
 	{
+		cout << prompt;
+		if (getline(cin, input))
+		{
+			input = Utils::trim(input);
+			if (!input.empty()) return input;
+		}
+
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Invalid input. \n" << prompt;
+		cout << "Invalid input. Please try again.\n";
 	}
-
-	return Utils::trim(input);
 }
 
 string Utils::inputString(const string& prompt, const string fields[])
 {
 	string input = "";
+	int fieldCount = sizeof(fields) / sizeof(fields[0]);
 
 	// Show prompt and allowed fields
 	cout << prompt <<  endl;
-	for (int i = 0; i < sizeof(fields) / sizeof(fields[0]); i++)
+	for (int i = 0; i < fieldCount; i++)
 	{
 		cout << " - " << fields[i] << endl;
 	}
@@ -90,9 +96,9 @@ string Utils::inputString(const string& prompt, const string fields[])
 
 		// Check if input matches any valid value
 		bool valid = false;
-		for (int i = 0; i < sizeof(fields) / sizeof(fields[0]); i++)
+		for (int i = 0; i < fieldCount; i++)
 		{
-			if (input == fields[i])
+			if (toUpper(input) == toUpper(fields[i]))
 			{
 				valid = true;
 				break;
