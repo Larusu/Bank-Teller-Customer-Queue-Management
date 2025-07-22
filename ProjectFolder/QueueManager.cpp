@@ -71,7 +71,20 @@ Customer QueueManager::serveCustomer()
 
 void QueueManager::displayQueue()
 {
-	
+	queue<Customer> tempQueue = regularQueue;
+	if (regularQueue.empty())
+	{
+		cout << "Queue is empty. Insert a customer first." << endl;
+		return;
+	}
+
+	cout << "|  ID  |             Name             |  Age  |  Transaction  |" << endl;
+	while (!tempQueue.empty())
+	{
+		Customer c = tempQueue.front();
+		cout << "|  " << c.id << "  |   " << c.name << "   |   " << c.age << "  |  " << c.transactionType << "  |" << endl;
+		tempQueue.pop();
+	}
 }
 
 bool QueueManager::hasCustomers()
