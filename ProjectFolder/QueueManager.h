@@ -1,5 +1,6 @@
 #pragma once
 #include "Customer.h"
+#include "Utils.h"
 #include <queue>
 #include <string>
 

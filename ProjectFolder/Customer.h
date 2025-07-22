@@ -1,11 +1,13 @@
 #pragma once
+#include <string>
 
 struct Customer 
 {
-    int id;
-    std::string name;
-    int age;
-    std::string transactionType;
-    int estimatedServiceTime; // simulated (e.g., 5 mins)
-    int arrivalOrder;         // used for FIFO or priority ordering
+    int id = 0;                            // Unique ID
+    std::string name = "";                 // Customer name
+    int age = 0;                           // Age for priority
+    std::string transactionType = "";      // Deposit, Withdrawal, etc.
+    int estimatedServiceTime = 0;          // Simulated service time in mins
+    int arrivalOrder = 0;                  // Queue order
+    bool priorityLevel;
 };

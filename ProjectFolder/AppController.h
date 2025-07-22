@@ -1,6 +1,7 @@
 #pragma once
 #include "QueueManager.h"
 #include "Statistics.h"
+#include "Utils.h"
 #include <iostream>
 
 // Handles the main application loop and menu navigation.
