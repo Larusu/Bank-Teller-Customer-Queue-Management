@@ -1,6 +1,7 @@
-#include <iostream>
+#include "AppController.h"
 
-int main()
+int main() 
 {
-	std::cout << "Hello World";
+    AppController app;
+    app.run();
 }
