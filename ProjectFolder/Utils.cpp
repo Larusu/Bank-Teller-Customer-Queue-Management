@@ -9,7 +9,11 @@ int Utils::estimateServiceTime(const string& transactionType)
 
 void Utils::clearScreen()
 {
-
+#ifndef WINDOWS
+	system("cls");
+#else
+	system("clear");
+#endif
 }
 
 string Utils::toUpper(const string& str)
