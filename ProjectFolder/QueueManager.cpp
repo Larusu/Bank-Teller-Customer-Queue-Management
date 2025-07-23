@@ -77,8 +77,9 @@ void QueueManager::displayQueue()
 		cout << "Queue is empty. Insert a customer first." << endl;
 		return;
 	}
-
-	cout << "|  ID  |             Name             |  Age  |  Transaction  |" << endl;
+	cout << "                              CURRENT QUEUE:                           " << endl;
+	cout << "-----------------------------------------------------------------------" << endl;
+	cout << "|  ID  |             Name             |  Age  |  Transaction  |  ETA  |" << endl;
 	while (!tempQueue.empty())
 	{
 		Customer c = tempQueue.front();
@@ -89,22 +90,24 @@ void QueueManager::displayQueue()
 
 bool QueueManager::hasCustomers()
 {
-
+	return regularQueue.empty();
 }
 
 int QueueManager::getCurrentQueueLength()
 {
-
+	return regularQueue.size();
 }
 
 int QueueManager::getPeakQueueLength()
 {
-
+	return peakQueueLength;
 }
 
 int QueueManager::getLastServiceTime()
 {
-
+	if (!regularQueue.empty())
+		return regularQueue.front().estimatedServiceTime;
+	return 0;
 }
 
 bool QueueManager::isVip(const std::string& name)

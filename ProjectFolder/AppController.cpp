@@ -52,7 +52,7 @@ void AppController::handleAddCustomer()
 void AppController::handleServeCustomer()
 {
 	Customer customer = queueManager.serveCustomer();
-	if (customer.id == 0)
+	if (queueManager.hasCustomers())
 	{
 		cout << "Queue is empty. Insert a customer first." << endl; 
 		return;
@@ -62,7 +62,7 @@ void AppController::handleServeCustomer()
 
 void AppController::handleDisplayQueue()
 {
-
+	queueManager.displayQueue();
 }
 
 void AppController::handleShowStatistics()
