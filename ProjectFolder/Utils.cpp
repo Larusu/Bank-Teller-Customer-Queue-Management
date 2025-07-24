@@ -9,6 +9,7 @@ int Utils::estimateServiceTime(const string& transactionType)
 	if (upper == "TRANSFER") return 4;  // 4 minutes - Transfers need account confirmation and possible approvals
 	if (upper == "DEPOSIT") return 3;   // 3 minutes - Deposits are relatively fast, just counting and logging
 	if (upper == "PAYMENT") return 2;	// 2 minutes - Payments (bills, cards) are usually the quickest
+	return 3;
 }
 
 void Utils::clearScreen()
@@ -44,7 +45,7 @@ int Utils::inputInteger(const string& prompt, int min, int max)
 		}
 		cin.ignore(1000, '\n');
 
-		while (input < min || input > max)
+		if (input < min || input > max)
 		{
 			cout << "Input must be between " << min << " and " << max << ". Please try again.\n";
 			continue;
@@ -57,8 +58,6 @@ int Utils::inputInteger(const string& prompt, int min, int max)
 string Utils::inputString(const string& prompt)
 {
 	string input;
-
-	cout << prompt;
 
 	while (true)
 	{
@@ -75,14 +74,13 @@ string Utils::inputString(const string& prompt)
 	}
 }
 
-string Utils::inputString(const string& prompt, const string fields[])
+string Utils::inputString(const string& prompt, const string fields[], int size)
 {
 	string input = "";
-	int fieldCount = sizeof(fields) / sizeof(fields[0]);
 
 	// Show prompt and allowed fields
 	cout << prompt <<  endl;
-	for (int i = 0; i < fieldCount; i++)
+	for (int i = 0; i < size; i++)
 	{
 		cout << " - " << fields[i] << endl;
 	}
@@ -91,12 +89,15 @@ string Utils::inputString(const string& prompt, const string fields[])
 	{
 		cout << "> ";
 
-		input = Utils::inputString(prompt);
-		input = trim(input);
+		if (getline(cin, input))
+		{
+			input = Utils::trim(input);
+			if (input.empty()) continue;
+		}
 
 		// Check if input matches any valid value
 		bool valid = false;
-		for (int i = 0; i < fieldCount; i++)
+		for (int i = 0; i < size; i++)
 		{
 			if (toUpper(input) == toUpper(fields[i]))
 			{

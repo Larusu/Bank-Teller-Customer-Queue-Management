@@ -39,30 +39,59 @@ void AppController::handleAddCustomer()
 {
 	string name = "";
 	int age = 0, minAge = 18, maxAge = 99;
-	string transaction = "", transactionTypes[] = { "Deposit", "Withdrawal", "Transfer", "Payment" };
+	string transaction = "";
+	string transactionTypes[] = { "Deposit", "Withdrawal", "Transfer", "Payment" };
 
 	name = inputString("Enter Full Name: ");
 	age = inputInteger("Enter Age: ", minAge, maxAge);
-	transaction = inputString("Enter Transaction Type: ", transactionTypes);
+	transaction = inputString("Enter Transaction Type: ", transactionTypes, 4);
 
 	Customer c = queueManager.createCustomer(name, age, transaction);
 	queueManager.addCustomer(c);
+
+	clearScreen();
 }
 
 void AppController::handleServeCustomer()
 {
-	Customer customer = queueManager.serveCustomer();
+	Customer customer;
+
 	if (queueManager.hasCustomers())
 	{
 		cout << "Queue is empty. Insert a customer first." << endl; 
 		return;
 	}
+
+	customer = queueManager.serveCustomer();
 	cout << "Now serving: " << customer.name << " (ID: " << customer.id << ")" << endl;
 }
 
 void AppController::handleDisplayQueue()
 {
 	queueManager.displayQueue();
+
+	char choice = 'n';
+	
+	cout << "Close window (Y = yes)?: ";
+	while (tolower(choice) != 'y')
+	{
+		cin >> choice;
+		choice = tolower(choice);
+		if (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Invalid input. Please try again: ";
+			continue;
+		}
+		cin.ignore(1000, '\n');
+
+		switch (choice)
+		{
+		case 'y': clearScreen(); return;
+		default: cout << "Invalid input. Please try again: "; continue;
+		}
+	}
 }
 
 void AppController::handleShowStatistics()

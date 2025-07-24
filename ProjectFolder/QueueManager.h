@@ -16,7 +16,7 @@ private:
     bool isVip(const std::string& name);
 public:
     Customer createCustomer(const std::string& name, int age, const std::string& transactionType); // Creates a Customer object with generated ID and ETA.
-    void addCustomer(const Customer& customer);     // Adds a customer to the queue.
+    void addCustomer(const Customer& newCustomer);     // Adds a customer to the queue.
     Customer serveCustomer();                       // Serves (removes) the first customer in queue.
     void displayQueue();                            // Displays all customers in the queue.
     bool hasCustomers();                            // Checks if the queue has customers.

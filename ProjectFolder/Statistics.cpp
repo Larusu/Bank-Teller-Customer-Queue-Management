@@ -9,15 +9,15 @@ void Statistics::recordService(int serviceTime)
 
 void Statistics::displayStatistics(int peakQueueLength)
 {
-
+	return;
 }
 
 double Statistics::getAverageServiceTime()
 {
-
+	return 0;
 }
 
 int Statistics::getTotalCustomersServed()
 {
-
+	return 0;
 }
