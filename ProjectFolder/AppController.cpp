@@ -142,11 +142,11 @@ void AppController::handleAddCustomer()
 		case 3: transaction = "Withdraw"; break;
 		case 4: transaction = "Transfer"; break;
 		case 5: transaction = "Payment"; break;
-		
 	}
 
 	Customer c = queueManager.createCustomer(name, age, transaction);
 	queueManager.addCustomer(c);
+	stats.recordService(c.estimatedServiceTime);
 
 	clearScreen();
 
@@ -200,5 +200,5 @@ void AppController::handleDisplayQueue()
 
 void AppController::handleShowStatistics()
 {
-
+	stats.displayStatistics(queueManager.getPeakQueueLength(queueManager.getCurrentQueueLength()));
 }

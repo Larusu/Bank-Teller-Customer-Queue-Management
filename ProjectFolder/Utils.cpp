@@ -5,11 +5,12 @@ using namespace std;
 int Utils::estimateServiceTime(const string& transactionType)
 {
 	string upper = Utils::trim(Utils::toUpper(transactionType));
-	if (upper == "WITHDRAW") return 5;  // 5 minutes - Withdrawals take longer due to cash handling & verification
-	if (upper == "TRANSFER") return 4;  // 4 minutes - Transfers need account confirmation and possible approvals
+	if (upper == "TRANSFER")return 6;   // 6 minutes - Transfers need account confirmation and possible approvals
+	if (upper == "WITHDRAW")return 5;   // 5 minutes - Withdrawals take longer due to cash handling & verification
+	if (upper == "PAYMENT") return 4;   // 4 minutes - Payments (bills, cards) are usually the quickest 
 	if (upper == "DEPOSIT") return 3;   // 3 minutes - Deposits are relatively fast, just counting and logging
-	if (upper == "PAYMENT") return 2;	// 2 minutes - Payments (bills, cards) are usually the quickest
-	return 3;
+	if (upper == "ACCOUNT") return 2;	// 2 minutes - Account checking for accessing their details
+	return 0;
 }
 
 void Utils::clearScreen()
