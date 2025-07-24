@@ -22,7 +22,6 @@ Customer QueueManager::createCustomer(const std::string& name, int age, const st
 
 void QueueManager::addCustomer(const Customer& newCustomer)
 {
-	cout << "Priority ng new customer ay: " << newCustomer.priorityLevel << endl;
 	// If customer has a priority level (1 = Senior Citizen, 2 = VIP)
 	if (newCustomer.priorityLevel > 0)
 	{
@@ -76,11 +75,12 @@ void QueueManager::displayQueue()
 	}
 	cout << "                              CURRENT QUEUE:                           " << endl;
 	cout << "-----------------------------------------------------------------------" << endl;
-	cout << "|  ID  |             Name             |  Age  |  Transaction  |  ETA  |" << endl;
+	cout << "|ID    |Name                          |Age    |Transaction    |ETA    |" << endl;
 	while (!tempQueue.empty())
 	{
 		Customer c = tempQueue.front();
-		cout << "|  " << c.id << "  |   " << c.name << "   |   " << c.age << "  |  " << c.transactionType << "  |" << endl;
+		cout << "|" << left << setw(6) << c.id << "|" << left << setw(30) << c.name << "|" << left << setw(7) << c.age << "|" << left << setw(15) << c.transactionType << "|" << left << setw(7) << c.estimatedServiceTime << "|" << endl;
+		//cout << "|  " << c.id << "  |   " << c.name << "   |   " << c.age << "  |  " << c.transactionType << "  |" << endl;
 		tempQueue.pop();
 	}
 }

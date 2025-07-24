@@ -4,6 +4,7 @@
 #include <queue>
 #include <string>
 #include <fstream>
+#include <iomanip>
 
 // Handles queue logic: adding, serving, and listing customers.
 class QueueManager 
