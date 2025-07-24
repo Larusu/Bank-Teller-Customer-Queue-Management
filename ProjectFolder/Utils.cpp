@@ -37,7 +37,8 @@ int Utils::inputInteger(const string& prompt, int min, int max)
 	{
 		cout << prompt;
 
-		while (!(cin >> input)) {
+		while (!(cin >> input)) 
+		{
 			cin.clear();
 			cin.ignore(1000, '\n');
 			cout << "Invalid input. \n";
@@ -110,6 +111,40 @@ string Utils::inputString(const string& prompt, const string fields[], int size)
 			return input;
 
 		cout << "Input must be one of the listed options. Please try again.\n";
+	}
+}
+
+char Utils::inputChar(const string& prompt)
+{
+	char input;
+	cout << prompt;
+
+	while (!(cin >> input))
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Invalid input. Please try again: ";
+		continue;
+	}cin.ignore(1000, '\n');
+
+	return input;
+}
+
+char Utils::getYesNoChoice(const string& prompt)
+{
+	char input;
+	cout << prompt;
+
+	while (true)
+	{
+		input = Utils::inputChar(prompt);
+
+		if (tolower(input) != 'y' || tolower(input) != 'n')
+		{
+			cout << "Must be Y or N only! Please try again: ";
+			continue;
+		}
+		return input;
 	}
 }
 
