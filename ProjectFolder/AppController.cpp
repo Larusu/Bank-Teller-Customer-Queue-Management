@@ -6,27 +6,16 @@ using namespace Utils;
 void AppController::run()
 {
 	Customer customer;
-	int masterChoice = 0, masterChoiceMin = 1, masterChoiceMax = 3, choice;
+	int choice = 0, choiceMin = 1, choiceMax = 3;
 
 	while (true)
 	{
 		showMasterMainMenu();
-		masterChoice = inputInteger("Enter Choice: ", masterChoiceMin, masterChoiceMax);
+		choice = inputInteger("Enter Choice: ", choiceMin, choiceMax);
 		cout << endl;
-		switch (masterChoice)
+		switch (choice)
 		{
-		case 1: showCustomerMainMenu();	
-			cout << "Choice: ";
-			switch (choice) {
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-				case 6:
-				
-			}
-		break;
+		case 1: showCustomerMainMenu();	break;
 		case 2: showTellerMainMenu();	break;
 		case 3: return;
 		default: cout << "Invalid choice!"; break;
@@ -48,31 +37,66 @@ void AppController::showMasterMainMenu()
 
 void AppController::showCustomerMainMenu()
 {
-	cout << "┌─────────────────────────────────────────────┐" << "\n";
-    cout << "│                  CUSTOMER                   │" << "\n";
-    cout << "├─────┬───────────────────────────────────────┤" << "\n";
-    cout << "│  1  │ Account                               │" << "\n";
-    cout << "├─────┼───────────────────────────────────────┤" << "\n";
-    cout << "│  2  │ Deposit                               │" << "\n";
-    cout << "├─────┼───────────────────────────────────────┤" << "\n";
-    cout << "│  3  │ Withdraw                              │" << "\n";
-    cout << "├─────┼───────────────────────────────────────┤" << "\n";
-    cout << "│  4  │ Transfer                              │" << "\n";
-    cout << "├─────┼───────────────────────────────────────┤" << "\n";
-    cout << "│  5  │ Payment                               │" << "\n";
-    cout << "├─────┼───────────────────────────────────────┤" << "\n";
-    cout << "│  6  │ Exit to Main Menu                     │" << "\n";
-    cout << "└─────┴───────────────────────────────────────┘" << "\n";
+	int choice = 0, choiceMin = 1, choiceMax = 6;
+
+	while (true)
+	{
+		cout << "┌─────────────────────────────────────────────┐" << "\n";
+		cout << "│                  CUSTOMER                   │" << "\n";
+		cout << "├─────┬───────────────────────────────────────┤" << "\n";
+		cout << "│  1  │ Account                               │" << "\n";
+		cout << "├─────┼───────────────────────────────────────┤" << "\n";
+		cout << "│  2  │ Deposit                               │" << "\n";
+		cout << "├─────┼───────────────────────────────────────┤" << "\n";
+		cout << "│  3  │ Withdraw                              │" << "\n";
+		cout << "├─────┼───────────────────────────────────────┤" << "\n";
+		cout << "│  4  │ Transfer                              │" << "\n";
+		cout << "├─────┼───────────────────────────────────────┤" << "\n";
+		cout << "│  5  │ Payment                               │" << "\n";
+		cout << "├─────┼───────────────────────────────────────┤" << "\n";
+		cout << "│  6  │ Exit to Main Menu                     │" << "\n";
+		cout << "└─────┴───────────────────────────────────────┘" << "\n";
+
+		choice = inputInteger("Choice: ", choiceMin, choiceMax);
+		switch (choice)
+		{
+		case 1: cout << "asda"; break;
+		case 2: cout << "asda"; break;
+		case 3: cout << "asda"; break;
+		case 4: cout << "asda"; break;
+		case 5: cout << "asda"; break;
+		case 6: cout << "asda"; break;
+		}
+	}
 }
 
 void AppController::showTellerMainMenu()
 {
-	cout << "======= BANK TELLER =======" << endl;
-	cout << "1. Add Customer to Queue " << endl;
-	cout << "2. Serve Next Customer" << endl;
-	cout << "3. Display Current Queue" << endl;
-	cout << "4. Show Statistics" << endl;
-	cout << "5. Exit" << endl;
+	int choice = 0, choiceMin = 1, choiceMax = 4;
+
+	while (true)
+	{
+		cout << "╔═════════════════════════════════════════════╗" << "\n";
+		cout << "║                BANK TELLER                  ║" << "\n";
+		cout << "╠═════╦═══════════════════════════════════════╣" << "\n";
+		cout << "║  1  ║ Serve Next Customer                   ║" << "\n";
+		cout << "╠═════╬═══════════════════════════════════════╣" << "\n";
+		cout << "║  2  ║ Display Current Queue                 ║" << "\n";
+		cout << "╠═════╬═══════════════════════════════════════╣" << "\n";
+		cout << "║  3  ║ Show Statistics                       ║" << "\n";
+		cout << "╠═════╬═══════════════════════════════════════╣" << "\n";
+		cout << "║  4  ║ Exit to Main Menu                     ║" << "\n";
+		cout << "╚═════╩═══════════════════════════════════════╝" << "\n";
+
+		choice = inputInteger("Choice: ", choiceMin, choiceMax);
+		switch (choice)
+		{
+		case 1: handleServeCustomer(); break;
+		case 2: handleDisplayQueue(); break;
+		case 3: handleShowStatistics(); break;
+		case 4: handleAddCustomer(); break;
+		}
+	}
 }
 
 void AppController::handleAddCustomer()
@@ -111,6 +135,9 @@ void AppController::handleServeCustomer()
 	}
 
 	customer = queueManager.serveCustomer();
+
+	clearScreen();
+
 	cout << "Now serving: " << customer.name << " (ID: " << customer.id << ")" << endl;
 }
 
@@ -120,7 +147,7 @@ void AppController::handleDisplayQueue()
 
 	char choice = 'n';
 	
-	cout << "Close window (Y = yes)?: ";
+	cout << "Close window [Y = yes]?: ";
 	while (tolower(choice) != 'y')
 	{
 		cin >> choice;

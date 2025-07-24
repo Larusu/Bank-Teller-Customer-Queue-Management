@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cctype>
+#include <iomanip>
 
 // Utility functions for input, estimation, and formatting.
 namespace Utils

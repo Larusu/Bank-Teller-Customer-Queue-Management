@@ -1,4 +1,4 @@
-#include "Utils.h"
+﻿#include "Utils.h"
 
 using namespace std;
 
@@ -41,14 +41,14 @@ int Utils::inputInteger(const string& prompt, int min, int max)
 		{
 			cin.clear();
 			cin.ignore(1000, '\n');
-			cout << "Invalid input. \n";
+			cout << "Invalid input.\n> ";
 			continue;
 		}
 		cin.ignore(1000, '\n');
 
 		if (input < min || input > max)
 		{
-			cout << "Input must be between " << min << " and " << max << ". Please try again.\n";
+			cout << "Input must be between " << min << " and " << max << ". Please try again.\n> ";
 			continue;
 		}
 
@@ -71,7 +71,7 @@ string Utils::inputString(const string& prompt)
 
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Invalid input. Please try again.\n";
+		cout << "Invalid input. Please try again.\n> ";
 	}
 }
 
@@ -110,7 +110,7 @@ string Utils::inputString(const string& prompt, const string fields[], int size)
 		if (valid) 
 			return input;
 
-		cout << "Input must be one of the listed options. Please try again.\n";
+		cout << "Input must be one of the listed options. Please try again.\n> ";
 	}
 }
 
@@ -123,7 +123,7 @@ char Utils::inputChar(const string& prompt)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Invalid input. Please try again: ";
+		cout << "Invalid input. Please try again.\n> ";
 		continue;
 	}cin.ignore(1000, '\n');
 
@@ -141,7 +141,7 @@ char Utils::getYesNoChoice(const string& prompt)
 
 		if (tolower(input) != 'y' || tolower(input) != 'n')
 		{
-			cout << "Must be Y or N only! Please try again: ";
+			cout << "Must be Y or N only! Please try again.\n> ";
 			continue;
 		}
 		return input;
