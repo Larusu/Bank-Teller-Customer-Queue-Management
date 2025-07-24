@@ -99,7 +99,7 @@ void AppController::showTellerMainMenu()
 		{
 		case 1: handleAddCustomer(); break;
 		case 2: handleServeCustomer(); break;
-		case 3: handleDisplayQueue(); break;
+		case 3: clearScreen(); handleDisplayQueue(); break;
 		case 4: handleShowStatistics(); break;
 		case 5: clearScreen(); return;
 		}
@@ -121,7 +121,7 @@ void AppController::handleAddCustomer()
 	name = inputString("Enter Full Name: ");
 	age = inputInteger("Enter Age: ", minAge, maxAge);
 
-	cout << "┌─────┬───────────────────────────────────────┐" << "\n";
+	cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
 	cout << "│  1  │ Account                               │" << "\n";
 	cout << "├─────┼───────────────────────────────────────┤" << "\n";
 	cout << "│  2  │ Deposit                               │" << "\n";
@@ -161,6 +161,7 @@ void AppController::handleServeCustomer()
 
 	if (queueManager.hasCustomers())
 	{
+		clearScreen();
 		cout << "Queue is empty. Insert a customer first." << endl; 
 		return;
 	}
@@ -176,32 +177,25 @@ void AppController::handleServeCustomer()
 
 void AppController::handleDisplayQueue()
 {	
-	clearScreen();
-
 	queueManager.displayQueue();
 
-	char choice = 'n';
-	
-	cout << "Close window [Y = yes]?: ";
-	while (tolower(choice) != 'y')
-	{
-		cin >> choice;
-		choice = tolower(choice);
-		if (cin.fail())
-		{
-			cin.clear();
-			cin.ignore(1000, '\n');
-			cout << "Invalid input. Please try again: ";
-			continue;
-		}
-		cin.ignore(1000, '\n');
-
-		switch (choice)
-		{
-		case 'y': clearScreen(); return;
-		default: cout << "Invalid input. Please try again: "; continue;
-		}
+	if(queueManager.hasCustomers()){
+		return;
 	}
+	char choice = getYesNoChoice("Serve Customer [ Y - Yes | N - Exit ]: ");
+
+	switch (choice) {
+		case 'y': 
+			handleServeCustomer();
+			if(!queueManager.hasCustomers())
+			{	
+				handleDisplayQueue();
+				break; 
+			}
+			cout << "You just emptied the queue!" << endl;
+			break;
+		case 'n': clearScreen(); return;
+	}	
 }
 
 void AppController::handleShowStatistics()

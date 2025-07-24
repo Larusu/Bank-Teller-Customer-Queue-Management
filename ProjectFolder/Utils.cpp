@@ -88,7 +88,7 @@ char Utils::inputChar(const string& prompt)
 		continue;
 	}cin.ignore(1000, '\n');
 
-	return input;
+	return tolower(input);
 }
 
 string Utils::trim(const std::string& str) 
@@ -102,13 +102,12 @@ string Utils::trim(const std::string& str)
 char Utils::getYesNoChoice(const string& prompt)
 {
 	char input;
-	cout << prompt;
 
 	while (true)
 	{
 		input = Utils::inputChar(prompt);
 
-		if (tolower(input) != 'y' || tolower(input) != 'n')
+		if (tolower(input) != 'y' && tolower(input) != 'n')
 		{
 			cout << "Must be Y or N only! Please try again.\n> ";
 			continue;

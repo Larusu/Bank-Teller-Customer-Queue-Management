@@ -6,7 +6,8 @@ using namespace std;
 Customer QueueManager::createCustomer(const std::string& name, int age, const std::string& transactionType)
 {
 	Customer c;
-	c.id = customerCounter++;
+	customerCounter++;
+	c.id = customerCounter;
 	c.name = nameFormatter(name);
 	c.age = age;
 	c.transactionType = transactionType;
@@ -83,16 +84,21 @@ void QueueManager::displayQueue()
 		cout << "Queue is empty. Insert a customer first." << endl;
 		return;
 	}
-	cout << "                              CURRENT QUEUE:                           " << endl;
-	cout << "-----------------------------------------------------------------------" << endl;
-	cout << "|ID    |Name                          |Age    |Transaction    |ETA    |" << endl;
+	
+	cout << "╔══════════════════════════ CURRENT QUEUE ══════════════════════════════╗" << endl;
+	cout << "╠══════╦══════════════════════════════╦═══════╦═══════════════╦═════════╣" << endl;
+	cout << "║  ID  ║             Name             ║  Age  ║  Transaction  ║   ETA   ║" << endl;
+	cout << "╠══════╬══════════════════════════════╬═══════╬═══════════════╬═════════╣" << endl;
+
 	while (!tempQueue.empty())
 	{
 		Customer c = tempQueue.front();
-		cout << "|" << left << setw(6) << c.id << "|" << left << setw(30) << c.name << "|" << left << setw(7) << c.age << "|" << left << setw(15) << c.transactionType << "|" << left << setw(7) << c.estimatedServiceTime << "|" << endl;
-		//cout << "|  " << c.id << "  |   " << c.name << "   |   " << c.age << "  |  " << c.transactionType << "  |" << endl;
+		cout << "║  " << left << setw(4) << c.id << "║ " << left << setw(29) << c.name << "║  " << left << setw(5) << c.age << "║ " << left << setw(14) << c.transactionType << "║ " << c.estimatedServiceTime << " mins  ║" << endl;
+		if(tempQueue.size() == 1) break;
+		cout << "╠══════╬══════════════════════════════╬═══════╬═══════════════╬═════════╣" << endl;
 		tempQueue.pop();
 	}
+	cout << "╚══════╩══════════════════════════════╩═══════╩═══════════════╩═════════╝\n";
 }
 
 bool QueueManager::hasCustomers()
