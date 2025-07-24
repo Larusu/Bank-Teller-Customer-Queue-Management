@@ -2,11 +2,18 @@
 #include "Customer.h"
 #include <iostream>
 #include <iomanip>
-#include <vector>
+#include <cmath>
+#include <windows.h>
 
 // Tracks statistics like total customers served and average time.
 class Statistics 
 {
+    public:
+    Statistics()
+    {
+        SetConsoleOutputCP(CP_UTF8);
+    }
+    
 private:
     int totalCustomersServed = 0;
     int totalServiceTime = 0;

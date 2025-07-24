@@ -167,6 +167,7 @@ void AppController::handleServeCustomer()
 	}
 
 	customer = queueManager.serveCustomer();
+	stats.setTotalServed();
 
 	clearScreen();
 

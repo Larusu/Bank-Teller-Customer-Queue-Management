@@ -24,7 +24,18 @@ void Statistics::displayStatistics(int peakQueueLength)
 	// Display overall number of Customer, served customer, not yet serve customer, average waiting time of all transactiosn
 						   // Number of customer per types of transactions, average waiting time per type of transaction
 	cout << fixed << setprecision(2);
-	cout << " OVerall Customer | served customer | not yet serve | average waiting time of all transaction" << endl;
+	cout << "╔══════════════════════════════════╗" << "\n";
+	cout << "║         Customer Report          ║" << "\n";                                                                        
+	cout << "╠══════════╦═══════════╦═══════════╣" << "\n";
+	cout << "║ Overall  ║  Served   ║  Pending  ║" << "\n";
+	cout << "╠══════════╬═══════════╬═══════════╣" << "\n";
+	cout << "║    " << left << setw(6) << totalCustomersServed << "║    " << setw(7) << totalServed << "║    " << setw(7) << notYetServe << getAverageServiceTime << "║" << "\n";
+	
+	cout << "╔═══════════════════════════════════════════════════╗" << "\n";
+	cout << "║               Average Waiting Time                ║" << "\n";                                                              
+	cout << "╠══════════╦══════════╦═════════╦═════════╦═════════╣" << "\n";	
+	cout << "║ Transfer ║ Withdraw ║ Payment ║ Deposit ║ Account ║" << "\n";
+	cout << "╠══════════╬══════════╬═════════╬═════════╬═════════╣" << "\n";
 	cout << totalCustomersServed << "|" << totalServed << "|" << notYetServe << getAverageServiceTime();
 	cout << "Overall customer's type of transcation      | Overall customer's waiting time per transaction" << endl;
 	cout << "Transfer|Withdraw|Payment|Deposit|Account   | Transfer|Withdraw|Payment|Deposit|Account" << endl;
