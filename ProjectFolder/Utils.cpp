@@ -75,45 +75,6 @@ string Utils::inputString(const string& prompt)
 	}
 }
 
-string Utils::inputString(const string& prompt, const string fields[], int size)
-{
-	string input = "";
-
-	// Show prompt and allowed fields
-	cout << prompt <<  endl;
-	for (int i = 0; i < size; i++)
-	{
-		cout << " - " << fields[i] << endl;
-	}
-
-	while (true)
-	{
-		cout << "> ";
-
-		if (getline(cin, input))
-		{
-			input = Utils::trim(input);
-			if (input.empty()) continue;
-		}
-
-		// Check if input matches any valid value
-		bool valid = false;
-		for (int i = 0; i < size; i++)
-		{
-			if (toUpper(input) == toUpper(fields[i]))
-			{
-				valid = true;
-				break;
-			}
-		}
-
-		if (valid) 
-			return input;
-
-		cout << "Input must be one of the listed options. Please try again.\n> ";
-	}
-}
-
 char Utils::inputChar(const string& prompt)
 {
 	char input;
@@ -128,6 +89,14 @@ char Utils::inputChar(const string& prompt)
 	}cin.ignore(1000, '\n');
 
 	return input;
+}
+
+string Utils::trim(const std::string& str) 
+{
+	auto start = find_if_not(str.begin(), str.end(), ::isspace);
+	auto end = find_if_not(str.rbegin(), str.rend(), ::isspace).base();
+
+	return string(start, end);
 }
 
 char Utils::getYesNoChoice(const string& prompt)
@@ -146,12 +115,4 @@ char Utils::getYesNoChoice(const string& prompt)
 		}
 		return input;
 	}
-}
-
-string Utils::trim(const std::string& str) 
-{
-	auto start = find_if_not(str.begin(), str.end(), ::isspace);
-	auto end = find_if_not(str.rbegin(), str.rend(), ::isspace).base();
-
-	return string(start, end);
 }
