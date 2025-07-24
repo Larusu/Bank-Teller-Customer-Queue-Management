@@ -12,7 +12,9 @@ private:
     Statistics stats;
 private:
     // Displays for admins
-    void showAdminMainMenu();            // Displays the main menu and gets user input.
+    void showMasterMainMenu();
+    void showCustomerMainMenu();
+    void showTellerMainMenu();            // Displays the main menu and gets user input.
     void handleAddCustomer();       // Collects customer data and adds to the queue.
     void handleServeCustomer();     // Serves the next customer and updates statistics.
     void handleDisplayQueue();      // Shows all customers currently in the queue.

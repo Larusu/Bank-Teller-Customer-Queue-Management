@@ -6,25 +6,66 @@ using namespace Utils;
 void AppController::run()
 {
 	Customer customer;
-	int choice = 0, choiceMin = 1, choiceMax = 4;
+	int masterChoice = 0, masterChoiceMin = 1, masterChoiceMax = 3, choice;
 
 	while (true)
 	{
-		showAdminMainMenu();
-		choice = inputInteger("Enter Choice: ", choiceMin, choiceMax);
+		showMasterMainMenu();
+		masterChoice = inputInteger("Enter Choice: ", masterChoiceMin, masterChoiceMax);
 		cout << endl;
-		switch (choice)
+		switch (masterChoice)
 		{
-		case 1: handleServeCustomer();	break;
-		case 2: handleDisplayQueue();	break;
-		case 3: handleShowStatistics(); break;
-		case 4: return;
+		case 1: showCustomerMainMenu();	
+			cout << "Choice: ";
+			switch (choice) {
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				
+			}
+		break;
+		case 2: showTellerMainMenu();	break;
+		case 3: return;
 		default: cout << "Invalid choice!"; break;
 		}
 	}
 }
+void AppController::showMasterMainMenu()
+{
+	cout << "╔═════════════════════════════════════════════╗" << "\n";
+    cout << "║                 MAIN MENU                   ║" << "\n";
+    cout << "╠═════╦═══════════════════════════════════════╣" << "\n";
+    cout << "║  1  ║ Enter Bank as Customer                ║" << "\n";
+    cout << "╠═════╬═══════════════════════════════════════╣" << "\n";
+	cout << "║  2  ║ Enter Bank as Teller                  ║" << "\n";
+    cout << "╠═════╬═══════════════════════════════════════╣" << "\n";
+    cout << "║  3  ║ Exit Bank                             ║" << "\n";
+    cout << "╚═════╩═══════════════════════════════════════╝" << "\n";
+}
 
-void AppController::showAdminMainMenu()
+void AppController::showCustomerMainMenu()
+{
+	cout << "┌─────────────────────────────────────────────┐" << "\n";
+    cout << "│                  CUSTOMER                   │" << "\n";
+    cout << "├─────┬───────────────────────────────────────┤" << "\n";
+    cout << "│  1  │ Account                               │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  2  │ Deposit                               │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  3  │ Withdraw                              │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  4  │ Transfer                              │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  5  │ Payment                               │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  6  │ Exit to Main Menu                     │" << "\n";
+    cout << "└─────┴───────────────────────────────────────┘" << "\n";
+}
+
+void AppController::showTellerMainMenu()
 {
 	cout << "======= BANK TELLER =======" << endl;
 	cout << "1. Add Customer to Queue " << endl;
