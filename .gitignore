@@ -56,3 +56,6 @@ obj/
 *.bak
 *.tmp
 *.log
+
+# Visual Studio Code
+.vscode/
