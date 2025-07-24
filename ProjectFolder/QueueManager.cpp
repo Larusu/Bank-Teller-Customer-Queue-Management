@@ -42,6 +42,11 @@ void QueueManager::addCustomer(const Customer& newCustomer)
 		}
 		
 		regularQueue.push(newCustomer);
+
+		// Set peak queue length
+		if (regularQueue.size() >= peakQueueLength) {
+			peakQueueLength = regularQueue.size();
+		} 
 		
 		while (!temp.empty())
 		{
@@ -52,6 +57,11 @@ void QueueManager::addCustomer(const Customer& newCustomer)
 	}
 	// Regular customers are added to the end of the queue
 	regularQueue.push(newCustomer);
+
+	// Set peak queue length
+	if (regularQueue.size() >= peakQueueLength) {
+		peakQueueLength = regularQueue.size();
+	} 
 }
 
 Customer QueueManager::serveCustomer()
@@ -95,8 +105,9 @@ int QueueManager::getCurrentQueueLength()
 	return regularQueue.size();
 }
 
-int QueueManager::getPeakQueueLength()
+int QueueManager::getPeakQueueLength(int currentQueueLength)
 {
+
 	return peakQueueLength;
 }
 

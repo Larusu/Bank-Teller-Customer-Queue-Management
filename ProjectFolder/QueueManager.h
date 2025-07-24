@@ -22,6 +22,6 @@ public:
     void displayQueue();                            // Displays all customers in the queue.
     bool hasCustomers();                            // Checks if the queue has customers.
     int getCurrentQueueLength();                    // Returns the current number of people in queue.
-    int getPeakQueueLength();                       // Returns the highest number of people recorded in queue.
+    int getPeakQueueLength(int currentQueueLength);                       // Returns the highest number of people recorded in queue.
     int getLastServiceTime();                       // Returns the service time of the last served customer.
 };

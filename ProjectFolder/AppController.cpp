@@ -41,13 +41,21 @@ void AppController::handleAddCustomer()
 	int age = 0, minAge = 18, maxAge = 99;
 	string transaction = "";
 	string transactionTypes[] = { "Deposit", "Withdrawal", "Transfer", "Payment" };
+	bool isConfirmed = false;
 
 	name = inputString("Enter Full Name: ");
 	age = inputInteger("Enter Age: ", minAge, maxAge);
 	transaction = inputString("Enter Transaction Type: ", transactionTypes, 4);
+	
+	//After confirmation
 
 	Customer c = queueManager.createCustomer(name, age, transaction);
 	queueManager.addCustomer(c);
+
+
+	int currentQueueLength = queueManager.getCurrentQueueLength();
+	queueManager.getPeakQueueLength(currentQueueLength);
+	
 
 	clearScreen();
 }
