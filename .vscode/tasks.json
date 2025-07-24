@@ -2,22 +2,21 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build All (main.cpp)",
+      "label": "Build all C++ files in ProjectFolder",
       "type": "shell",
       "command": "g++",
       "args": [
-        "-std=c++17",
-        "-g",
-        "*.cpp",
+        "ProjectFolder/*.cpp",
         "-o",
-        "main.exe"
+        "ProjectFolder/main.exe",
+        "-IProjectFolder"
       ],
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": [ "$gcc" ],
-      "detail": "Compiles all .cpp files into main.exe"
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiles all .cpp files in ProjectFolder into main.exe"
     }
   ]
 }
