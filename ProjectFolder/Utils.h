@@ -15,4 +15,6 @@ namespace Utils
     std::string inputString(const std::string& prompt);             // Prompts for and returns a string input.
     std::string inputString(const std::string& prompt, const std::string fields[], int size);
     std::string trim(const std::string& str);                       // Trim both leading and trailing whitespace
+    char inputChar(const std::string& prompt);
+    char getYesNoChoice(const std::string& prompt);
 }
