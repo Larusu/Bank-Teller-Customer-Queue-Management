@@ -15,6 +15,7 @@ private:
     int peakQueueLength = 0;
 private:
     bool isVip(const std::string& name);
+    std::string nameFormatter(const std::string& name);
 public:
     Customer createCustomer(const std::string& name, int age, const std::string& transactionType); // Creates a Customer object with generated ID and ETA.
     void addCustomer(const Customer& newCustomer);  // Adds a customer to the queue.

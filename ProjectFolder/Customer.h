@@ -3,7 +3,7 @@
 
 struct Customer 
 {
-    int id = 0;                            // Unique ID
+    int id = 1;                            // Unique ID
     std::string name = "";                 // Customer name
     int age = 0;                           // Age for priority
     std::string transactionType = "";      // Deposit, Withdrawal, etc.
