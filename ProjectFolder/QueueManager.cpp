@@ -7,7 +7,7 @@ Customer QueueManager::createCustomer(const std::string& name, int age, const st
 {
 	Customer c;
 	c.id = customerCounter++;
-	c.name = name;
+	c.name = nameFormatter(name);
 	c.age = age;
 	c.transactionType = transactionType;
 	c.estimatedServiceTime = estimateServiceTime(transactionType);
@@ -132,4 +132,31 @@ bool QueueManager::isVip(const std::string& name)
 		}
 	}
 	return false;
+}
+
+string QueueManager::nameFormatter(const string& name)
+{
+	string newName;
+	bool firstLetter = true;
+
+	for (char n : trim(name))
+	{
+		if (firstLetter)
+		{
+			newName += toupper(n);
+			firstLetter = false;
+			continue;
+		}
+
+		if (isspace(n))
+		{
+			newName += " ";
+			firstLetter = true;
+			continue;
+		}
+
+		newName += tolower(n);
+	}
+
+	return newName;
 }
