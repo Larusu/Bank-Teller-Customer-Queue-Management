@@ -11,12 +11,14 @@ private:
     QueueManager queueManager; 
     Statistics stats;
 private:
-    void showMainMenu();            // Displays the main menu and gets user input.
+    // Displays for admins
+    void showAdminMainMenu();            // Displays the main menu and gets user input.
     void handleAddCustomer();       // Collects customer data and adds to the queue.
     void handleServeCustomer();     // Serves the next customer and updates statistics.
     void handleDisplayQueue();      // Shows all customers currently in the queue.
     void handleShowStatistics();    // Displays summary statistics.
 
+    // Displays for main menu
 public:
     void run();  // Called from main()
 };

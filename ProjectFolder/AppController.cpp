@@ -6,26 +6,25 @@ using namespace Utils;
 void AppController::run()
 {
 	Customer customer;
-	int choice = 0, choiceMin = 1, choiceMax = 5;
+	int choice = 0, choiceMin = 1, choiceMax = 4;
 
 	while (true)
 	{
-		showMainMenu();
+		showAdminMainMenu();
 		choice = inputInteger("Enter Choice: ", choiceMin, choiceMax);
 		cout << endl;
 		switch (choice)
 		{
-		case 1: handleAddCustomer();	break;
-		case 2: handleServeCustomer();	break;
-		case 3: handleDisplayQueue();	break;
-		case 4: handleShowStatistics(); break;
-		case 5: return;
+		case 1: handleServeCustomer();	break;
+		case 2: handleDisplayQueue();	break;
+		case 3: handleShowStatistics(); break;
+		case 4: return;
 		default: cout << "Invalid choice!"; break;
 		}
 	}
 }
 
-void AppController::showMainMenu()
+void AppController::showAdminMainMenu()
 {
 	cout << "======= BANK TELLER =======" << endl;
 	cout << "1. Add Customer to Queue " << endl;
