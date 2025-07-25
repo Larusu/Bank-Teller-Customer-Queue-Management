@@ -201,5 +201,22 @@ void AppController::handleDisplayQueue()
 
 void AppController::handleShowStatistics()
 {
-	stats.displayStatistics(queueManager.getPeakQueueLength(queueManager.getCurrentQueueLength()));
+	char choice;
+	int length = queueManager.getCurrentQueueLength();
+
+	while (true)
+	{
+		stats.displayStatistics(queueManager.getPeakQueueLength(length));
+		choice = getYesNoChoice("Do you want to exit [ Y - Yes | N - No ]: ");
+
+		cout << choice;
+		if (choice == 'y') {
+			clearScreen(); 
+			return;
+		}
+		if (choice == 'n') {
+			cout << "gumana"; 
+			continue;
+		}
+	}
 }

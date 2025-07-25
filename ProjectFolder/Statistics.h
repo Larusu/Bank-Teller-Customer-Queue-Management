@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <cmath>
 #include <windows.h>
+#include "Utils.h"
 
 // Tracks statistics like total customers served and average time.
 class Statistics 

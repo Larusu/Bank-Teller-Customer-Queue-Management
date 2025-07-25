@@ -1,5 +1,6 @@
 #include "Statistics.h"
 
+using namespace Utils;
 using namespace std;
 
 void Statistics::recordService(int serviceTime)
@@ -19,28 +20,35 @@ void Statistics::recordService(int serviceTime)
 
 void Statistics::displayStatistics(int peakQueueLength)
 {
-	// BASAHIN MO TO ::: lagay ka peak queue length
+	clearScreen();
+
+	int peak = peakQueueLength;
 	int notYetServe = totalCustomersServed - totalServed;
-	// Display overall number of Customer, served customer, not yet serve customer, average waiting time of all transactiosn
-						   // Number of customer per types of transactions, average waiting time per type of transaction
+
 	cout << fixed << setprecision(2);
-	cout << "╔══════════════════════════════════╗" << "\n";
-	cout << "║         Customer Report          ║" << "\n";                                                                        
-	cout << "╠══════════╦═══════════╦═══════════╣" << "\n";
-	cout << "║ Overall  ║  Served   ║  Pending  ║" << "\n";
-	cout << "╠══════════╬═══════════╬═══════════╣" << "\n";
-	cout << "║    " << left << setw(6) << totalCustomersServed << "║    " << setw(7) << totalServed << "║    " << setw(7) << notYetServe << getAverageServiceTime << "║" << "\n";
-	
+
+	cout << "╔══════════════════════════════════════════════════════╗" << "\n";
+	cout << "║                   Customer Report                    ║" << "\n";                                                                        
+	cout << "╠══════════╦═══════════╦═══════════╦═══════════════════╣" << "\n";
+	cout << "║ Overall  ║  Served   ║  Pending  ║ Peak Queue Length ║" << "\n";
+	cout << "╠══════════╬═══════════╬═══════════╬═══════════════════╣" << "\n";
+	cout << "║    " << left << setw(6) << totalCustomersServed << "║    " << setw(7) << totalServed << "║    " << setw(7) << notYetServe << "║        " << setw(11) << peak << "║" << "\n";
+	cout << "╚══════════╩═══════════╩═══════════╩═══════════════════╝" << "\n\n";
 	cout << "╔═══════════════════════════════════════════════════╗" << "\n";
-	cout << "║               Average Waiting Time                ║" << "\n";                                                              
+	cout << "║                 No of Transactions                ║" << "\n";                                                              
 	cout << "╠══════════╦══════════╦═════════╦═════════╦═════════╣" << "\n";	
 	cout << "║ Transfer ║ Withdraw ║ Payment ║ Deposit ║ Account ║" << "\n";
 	cout << "╠══════════╬══════════╬═════════╬═════════╬═════════╣" << "\n";
-	cout << totalCustomersServed << "|" << totalServed << "|" << notYetServe << getAverageServiceTime();
-	cout << "Overall customer's type of transcation      | Overall customer's waiting time per transaction" << endl;
-	cout << "Transfer|Withdraw|Payment|Deposit|Account   | Transfer|Withdraw|Payment|Deposit|Account" << endl;
-	cout << totalCustomerTransfer << " " << totalCustomerWithdraw << " " << totalCustomerPayment << " " << totalCustomerDeposit << " " << totalCustomerAccount << " ";
-	cout << 6 << " " << 5 << " " << 4 << " " << 3 << " " << 2;
+	cout << "║    " << setw(6) << totalCustomerTransfer << "║    " << setw(6) << totalCustomerWithdraw << "║   " << setw(6) << totalCustomerPayment << "║   " << setw(6) << totalCustomerDeposit << "║   " << setw(6) << totalCustomerAccount << "║" << "\n";
+	cout << "╚══════════╩══════════╩═════════╩═════════╩═════════╝" << "\n\n";
+
+	cout << "╔═══════════════════════════════════════════════════╗" << "\n";
+	cout << "║                Average Waiting Time               ║" << "\n";
+	cout << "╠══════════╦══════════╦═════════╦═════════╦═════════╣" << "\n";
+	cout << "║ Transfer ║ Withdraw ║ Payment ║ Deposit ║ Account ║" << "\n";
+	cout << "╠══════════╬══════════╬═════════╬═════════╬═════════╣" << "\n";
+	cout << "║  6 mins  ║  5 mins  ║ 4 mins  ║ 3 mins  ║ 2 mins  ║" << "\n";
+	cout << "╚══════════╩══════════╩═════════╩═════════╩═════════╝" << "\n\n";
 }
 
 double Statistics::getAverageServiceTime()
