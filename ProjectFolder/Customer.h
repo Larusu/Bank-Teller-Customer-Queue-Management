@@ -1,6 +1,12 @@
 #pragma once
 #include <string>
 
+struct BankDetails
+{
+    std::string bankId = "";
+    double balance = 0.0;
+};
+
 struct Customer 
 {
     int id = 1;                            // Unique ID
@@ -10,4 +16,6 @@ struct Customer
     int estimatedServiceTime = 0;          // Simulated service time in mins
     int arrivalOrder = 0;                  // Queue order
     int priorityLevel = 0;                 // 0 = Regular, 1 = Senior Citizen, 2 = VIP
+
+    BankDetails bank;
 };

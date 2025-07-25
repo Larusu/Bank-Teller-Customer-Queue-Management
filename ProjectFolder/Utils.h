@@ -17,4 +17,5 @@ namespace Utils
     char inputChar(const std::string& prompt);
     std::string trim(const std::string& str);                       // Trim both leading and trailing whitespace
     char getYesNoChoice(const std::string& prompt);
+    double inputDouble(const std::string& prompt, double min, double max);
 }

@@ -38,11 +38,11 @@ int Utils::inputInteger(const string& prompt, int min, int max)
 	{
 		cout << prompt;
 
-		while (!(cin >> input)) 
+		if (!(cin >> input)) 
 		{
 			cin.clear();
 			cin.ignore(1000, '\n');
-			cout << "Invalid input.\n> ";
+			cout << "Invalid input. Please enter a number.\n> ";
 			continue;
 		}
 		cin.ignore(1000, '\n');
@@ -64,15 +64,35 @@ string Utils::inputString(const string& prompt)
 	while (true)
 	{
 		cout << prompt;
-		if (getline(cin, input))
+		if (!getline(cin, input))
 		{
-			input = Utils::trim(input);
-			if (!input.empty()) return input;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Invalid input. Please try again.\n> ";
 		}
 
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Invalid input. Please try again.\n> ";
+		input = Utils::trim(input);
+
+		bool isValid = true;
+		for (char c : input)
+		{
+			if (!isalpha(c) && !isspace(c))
+			{
+				isValid = false;
+				break;
+			}
+		}
+		if (!isValid)
+		{
+			cout << "Input must be letters only. Please try again.\n> ";
+			continue;
+		}
+
+		if (!input.empty())
+		{
+			return input;
+		}
+		cout << "Input cannot be empty. Please try again.\n> ";
 	}
 }
 
@@ -91,6 +111,35 @@ char Utils::inputChar(const string& prompt)
 
 	return tolower(input);
 }
+
+double Utils::inputDouble(const string& prompt, double min, double max)
+{
+	double input;
+
+	while (true)
+	{
+		cout << prompt;
+
+		if (!(cin >> input))
+		{
+			cin.clear();                  // Clear the error flag
+			cin.ignore(1000, '\n');       // Discard bad input
+			cout << "Invalid input. Please enter a numeric value.\n";
+			continue;
+		}
+
+		cin.ignore(1000, '\n');           // Clear newline left in buffer
+
+		if (input < min || input > max)
+		{
+			cout << "Input must be between " << min << " and " << max << ". Please try again.\n";
+			continue;
+		}
+
+		return input;
+	}
+}
+
 
 string Utils::trim(const std::string& str) 
 {

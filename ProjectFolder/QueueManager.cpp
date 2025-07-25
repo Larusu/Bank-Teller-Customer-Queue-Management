@@ -3,24 +3,135 @@
 using namespace Utils;
 using namespace std;
 
-Customer QueueManager::createCustomer(const std::string& name, int age, const std::string& transactionType)
+// ---------- Utility / Internal Helpers ----------
+bool QueueManager::isVip(const std::string& name)
 {
+	ifstream vipFile;
+	string line;
+
+	vipFile.open("vip_names.txt");
+	while (getline(vipFile, line))
+	{
+		if (toUpper(trim(name)) == line)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+string QueueManager::nameFormatter(const string& name)
+{
+	string newName;
+	bool firstLetter = true;
+
+	for (char n : trim(name))
+	{
+		if (firstLetter)
+		{
+			newName += toupper(n);
+			firstLetter = false;
+			continue;
+		}
+
+		if (isspace(n))
+		{
+			newName += " ";
+			firstLetter = true;
+			continue;
+		}
+
+		newName += tolower(n);
+	}
+
+	return newName;
+}
+
+string QueueManager::generateBankId()
+{
+	string code = generateCode(3) + "-" + generateCode(3);
+	if (regularQueue.empty())
+	{
+		return code;
+	}
+	queue<Customer> temp = regularQueue;
+	
+	while (!temp.empty())
+	{
+		Customer c = temp.front();
+		temp.pop();
+		
+		if (c.bank.bankId == code)
+		{
+			code = generateCode(3) + "-" + generateCode(3);
+		}
+	}
+
+	return code;
+}
+
+string QueueManager::generateCode(int length)
+{
+	string RandomCode = "";
+
+	while (RandomCode.length() < length)
+	{
+		char random = (rand() % 10) + '0';
+		RandomCode += random;
+	}
+	return RandomCode;
+}
+
+// ---------- Customer Creation & Lookup ----------
+bool QueueManager::isExistingName(const std::string& name)
+{
+	// check served customers
+	for (int i = 0; i < servedCustomers.size(); i++)
+	{
+		if (toUpper(servedCustomers[i].name) == trim(toUpper(name)))
+		{
+			return true;
+		}
+	}
+
+	// if none in served customer
+	queue<Customer>tempQueue = regularQueue;
+	while (!tempQueue.empty())
+	{
+		Customer c = tempQueue.front();
+		tempQueue.pop();
+
+		if (toUpper(c.name) == trim(toUpper(name)))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+Customer QueueManager::createCustomer(const string& name, int age, const string& transactionType, double balance)
+{
+
 	Customer c;
+	
 	customerCounter++;
-	c.id = customerCounter;
 	c.name = nameFormatter(name);
+	c.id = customerCounter;
+	c.bank.bankId = generateBankId();
 	c.age = age;
+	c.bank.balance = balance;
 	c.transactionType = transactionType;
 	c.estimatedServiceTime = estimateServiceTime(transactionType);
 	c.arrivalOrder = regularQueue.size();
 
-	if (c.age >= 60) { c.priorityLevel = 1; }
-	else if (isVip(name)) { c.priorityLevel = 2; }
+	if (isVip(name)) { c.priorityLevel = 2; }
+	else if (c.age >= 60) { c.priorityLevel = 1; }
 	else { c.priorityLevel = 0; }
 
 	return c;
 }
 
+// ---------- Queue Management ----------
 void QueueManager::addCustomer(const Customer& newCustomer)
 {
 	// If customer has a priority level (1 = Senior Citizen, 2 = VIP)
@@ -49,29 +160,27 @@ void QueueManager::addCustomer(const Customer& newCustomer)
 			regularQueue.push(temp.front());
 			temp.pop();
 		}
-
-		// Set peak queue length
-		if (regularQueue.size() > peakQueueLength) {
-			peakQueueLength = regularQueue.size();
-		} 
-		return;
 	}
+	else
+	{
 	// Regular customers are added to the end of the queue
-	regularQueue.push(newCustomer);
-
+		regularQueue.push(newCustomer);
+	}
+	
 	// Set peak queue length
-	if (regularQueue.size() >= peakQueueLength) {
+	if (regularQueue.size() > peakQueueLength) {
 		peakQueueLength = regularQueue.size();
-	} 
+	}
 }
 
 Customer QueueManager::serveCustomer()
 {
 	if (!regularQueue.empty())
 	{
-		Customer c = regularQueue.front();
+		Customer front = regularQueue.front();
+		servedCustomers.push_back(front);
 		regularQueue.pop();
-		return c;
+		return front;
 	}
 	return Customer(); // return default if empty
 }
@@ -116,6 +225,82 @@ int QueueManager::getPeakQueueLength(int currentQueueLength)
 	return peakQueueLength;
 }
 
+Customer QueueManager::getFront()
+{
+	return regularQueue.front();
+}
+
+// ---------- Transactions ----------
+void QueueManager::depositMoney(double deposit, const string& bankId)
+{
+	for (Customer& c : servedCustomers)
+	{
+		if (c.bank.bankId == bankId)
+		{
+			c.bank.balance = deposit;
+			return;
+		}
+	}
+}
+
+void QueueManager::transferMoney(double amount, const std::string& senderId, const std::string& recipientId)
+{
+	int senderIndex = -1;
+
+	for (int i = 0; i < servedCustomers.size(); i++)
+	{
+		if (servedCustomers[i].bank.bankId == senderId)
+		{
+			senderIndex = i;
+			break;
+		}
+	}
+
+	if (senderIndex == -1) { cout << "Invalid sender id! "; return; }
+
+	// Transfer if recipient is in servedCustomers
+	for (int i = 0; i < servedCustomers.size(); i++)
+	{
+		if (servedCustomers[i].bank.bankId == recipientId && senderIndex != -1)
+		{
+			servedCustomers[senderIndex].bank.balance -= amount;
+			servedCustomers[i].bank.balance += amount;
+			return;
+		}
+	}
+
+	// If not found in servedCustomers, search in regularQueue and rebuild it
+	queue<Customer> tempQueue;
+	while (!regularQueue.empty())
+	{
+		Customer c = regularQueue.front();
+		regularQueue.pop();
+
+		if (c.bank.bankId == recipientId && senderIndex != -1)
+		{
+			servedCustomers[senderIndex].bank.balance -= amount;
+			c.bank.balance += amount;
+		}
+
+		tempQueue.push(c);
+	}
+
+	regularQueue = tempQueue;
+}
+
+void QueueManager::deductFromBalance(double amount, const string& bankId)
+{
+	for (Customer& c : servedCustomers)
+	{
+		if (c.bank.bankId == bankId)
+		{
+			c.bank.balance -= amount;
+			return;
+		}
+	}
+}
+
+// ---------- Statistics & Accessors ----------
 int QueueManager::getLastServiceTime()
 {
 	if (!regularQueue.empty())
@@ -123,45 +308,12 @@ int QueueManager::getLastServiceTime()
 	return 0;
 }
 
-bool QueueManager::isVip(const std::string& name)
+const vector<Customer>& QueueManager::getServedCustomers()
 {
-	ifstream vipFile;
-	string line;
-
-	vipFile.open("vip_names.txt");
-	while (getline(vipFile, line))
-	{
-		if (toUpper(trim(name)) == line)
-		{
-			return true;
-		}
-	}
-	return false;
+	return servedCustomers;
 }
 
-string QueueManager::nameFormatter(const string& name)
+const queue<Customer>& QueueManager::getPendingCustomers()
 {
-	string newName;
-	bool firstLetter = true;
-
-	for (char n : trim(name))
-	{
-		if (firstLetter)
-		{
-			newName += toupper(n);
-			firstLetter = false;
-			continue;
-		}
-
-		if (isspace(n))
-		{
-			newName += " ";
-			firstLetter = true;
-			continue;
-		}
-
-		newName += tolower(n);
-	}
-
-	return newName;
+	return regularQueue;
 }
