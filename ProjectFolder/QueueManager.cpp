@@ -193,11 +193,6 @@ void QueueManager::displayQueue()
 		cout << "Queue is empty. Insert a customer first." << endl;
 		return;
 	}
-	
-	cout << "╔══════════════════════════ CURRENT QUEUE ══════════════════════════════╗" << endl;
-	cout << "╠══════╦══════════════════════════════╦═══════╦═══════════════╦═════════╣" << endl;
-	cout << "║  ID  ║             Name             ║  Age  ║  Transaction  ║   ETA   ║" << endl;
-	cout << "╠══════╬══════════════════════════════╬═══════╬═══════════════╬═════════╣" << endl;
 
 	while (!tempQueue.empty())
 	{
@@ -207,12 +202,11 @@ void QueueManager::displayQueue()
 		cout << "╠══════╬══════════════════════════════╬═══════╬═══════════════╬═════════╣" << endl;
 		tempQueue.pop();
 	}
-	cout << "╚══════╩══════════════════════════════╩═══════╩═══════════════╩═════════╝\n";
 }
 
 bool QueueManager::hasCustomers()
 {
-	return regularQueue.empty();
+	return !regularQueue.empty();
 }
 
 int QueueManager::getCurrentQueueLength()

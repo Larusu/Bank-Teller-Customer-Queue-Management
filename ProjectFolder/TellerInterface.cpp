@@ -112,11 +112,17 @@ void TellerInterface::serveCustomer()
 
 void TellerInterface::displayQueue()
 {
-	queueManager.displayQueue();
-
-	if (queueManager.hasCustomers()) {
+	if (!queueManager.hasCustomers()) {
 		return;
 	}
+
+	cout << "╔══════════════════════════ CURRENT QUEUE ══════════════════════════════╗" << endl;
+	cout << "╠══════╦══════════════════════════════╦═══════╦═══════════════╦═════════╣" << endl;
+	cout << "║  ID  ║             Name             ║  Age  ║  Transaction  ║   ETA   ║" << endl;
+	cout << "╠══════╬══════════════════════════════╬═══════╬═══════════════╬═════════╣" << endl;
+	queueManager.displayQueue();
+	cout << "╚══════╩══════════════════════════════╩═══════╩═══════════════╩═════════╝\n";
+
 	char choice = getYesNoChoice("Serve Customer [ Y - Yes | N - Exit ]: ");
 
 	switch (choice) {
