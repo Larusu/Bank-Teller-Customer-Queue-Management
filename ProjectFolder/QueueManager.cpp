@@ -231,7 +231,7 @@ void QueueManager::depositMoney(double deposit, const string& bankId)
 	{
 		if (c.bank.bankId == bankId)
 		{
-			c.bank.balance = deposit;
+			c.bank.balance += deposit;
 			return;
 		}
 	}

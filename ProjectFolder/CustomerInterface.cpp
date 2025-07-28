@@ -60,7 +60,7 @@ void CustomerInterface::showCustomerMenu()
 			}
 
 			Customer c;
-			c.name = fullName;
+			c.name = temp.name;
 			c.age = temp.age;
 			c.bank.balance = temp.bank.balance;
 			c.bank.bankId = temp.bank.bankId;
@@ -136,7 +136,7 @@ bool CustomerInterface::completeTransaction(const string& name)
 
 	stats.setTotalServed();
 	queueManager.isServed(getCustomer);
-				existingCustomersData.push_back(getCustomer);
+	existingCustomersData.push_back(queueManager.getServedCustomers()[index]);
 	return true;
 }
 
