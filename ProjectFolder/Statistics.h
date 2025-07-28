@@ -9,11 +9,16 @@
 // Tracks statistics like total customers served and average time.
 class Statistics 
 {
-    public:
+public:
     Statistics()
     {
         SetConsoleOutputCP(CP_UTF8);
     }
+    void recordService(int serviceTime);            // Records the time taken for a served customer.
+    void displayStatistics(int peakQueueLength);    // Displays current statistics summary.
+    double getAverageServiceTime();                 // Returns average service time.
+    int getTotalCustomersServed();                  // Returns total number of customers served.
+    void setTotalServed();
     
 private:
     int totalCustomersServed = 0;
@@ -24,12 +29,4 @@ private:
     int totalCustomerPayment = 0;
     int totalCustomerDeposit = 0;
     int totalCustomerAccount = 0;
-
-public:
-    void recordService(int serviceTime);            // Records the time taken for a served customer.
-    void displayStatistics(int peakQueueLength);    // Displays current statistics summary.
-    double getAverageServiceTime();                 // Returns average service time.
-    int getTotalCustomersServed();                  // Returns total number of customers served.
-    void setTotalServed();
-
 };
