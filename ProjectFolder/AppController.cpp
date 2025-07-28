@@ -10,6 +10,7 @@ void AppController::run()
 
 	while (true)
 	{
+		cout << announcement;
 		showMasterMainMenu();
 		choice = inputInteger("Enter Choice: ", choiceMin, choiceMax);
 		cout << endl;

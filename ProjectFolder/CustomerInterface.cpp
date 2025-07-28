@@ -20,8 +20,8 @@ void CustomerInterface::showCustomerMenu()
 	cout << "║          the transaction process.           ║" << "\n";
 	cout << "║      Please enter your name correctly.      ║" << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
-	lastName = inputString("Enter you Last Name: ");
-	firstName = inputString("Enter you First Name: ");
+	lastName = inputString("Enter your Last Name: ");
+	firstName = inputString("Enter your First Name: ");
 	fullName = firstName + " " + lastName;
 
 	// If the customer was served using their name, check their transaction type
@@ -97,8 +97,8 @@ void CustomerInterface::showCustomerMenu()
 
 	if(!queueManager.isExistingName(fullName))
 	{
-		age = inputInteger("Enter you age: ", minAge, maxAge);
-		balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
+		age = inputInteger("Enter your age: ", minAge, maxAge);
+		balance = inputDouble("Enter initial deposit: ", minBal, maxBal);
 
 		char choice = getYesNoChoice("Confirm adding customer? [y or n]: ");
 
@@ -170,7 +170,7 @@ void CustomerInterface::account(Customer& servedCustomer)
 		cout << "║ Bank ID:    " << left << setw(32) << servedCustomer.bank.bankId << "║" << '\n';
 		cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-		choice = getYesNoChoice("Do you want to exit the bank[ Y - Yes , N - No]: ");
+		choice = getYesNoChoice("Do you want to exit the bank? [Y - Yes, N - No]: ");
 
 		if (choice == 'y') {
 			clearScreen();
@@ -201,7 +201,7 @@ void CustomerInterface::deposit(Customer& servedCustomer)
 
 		queueManager.depositMoney(depositAmount, bankId);
 
-		choice = getYesNoChoice("Do you want to exit [ Y - Yes ]: ");
+		choice = getYesNoChoice("Do you want to exit the bank[ Y - Yes , N - No]: ");
 
 		if (choice == 'y') {
 			clearScreen();
@@ -308,7 +308,7 @@ void CustomerInterface::transfer(Customer& servedCustomer)
 		cout << "Bank ID doesn't exist. Please try again.\n";
 	}
 
-	transferAmount = inputDouble("Withdraw Amount: ", minTransfer, maxTransfer);
+	transferAmount = inputDouble("Transfer Amount: ", minTransfer, maxTransfer);
 
 	queueManager.transferMoney(transferAmount, bankId, recipientId);
 
@@ -329,10 +329,10 @@ void CustomerInterface::payment(Customer& servedCustomer)
 	char choice;
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-	cout << "║     " << firstName << "'s Paying       ║" << "\n";
+	cout << "║        " << firstName << "'s Payment                ║" << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 	cout << " Available balance: " << maxPayment << endl;
-	paymentPurpose = inputString("Enter purpose of payment: ");
+	paymentPurpose = inputString("Enter Purpose of Payment: ");
 	paymentAmount = inputDouble("Payment Amount: ", minPayment, maxPayment);
 
 	queueManager.deductFromBalance(paymentAmount, bankId);

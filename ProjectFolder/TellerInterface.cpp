@@ -55,7 +55,7 @@ void TellerInterface::addCustomer()
 
 	if(queueManager.isExistingName(name))
 	{
-		cout << "Customer already have a pending transaction. " << endl;
+		cout << "Customer already has a pending transaction." << endl;
 		return;
 	}
 
@@ -85,7 +85,7 @@ void TellerInterface::addCustomer()
 	case 5: transaction = "Payment"; break;
 	}
 
-	char choice = getYesNoChoice("Confirm adding customer? [y or n]: ");
+	char choice = getYesNoChoice("Confirm adding customer? [Y - Yes | N - No]: ");
 
 	if(choice == 'n') return;
 	
@@ -115,6 +115,7 @@ void TellerInterface::serveCustomer()
 
 	clearScreen();
 
+	g_announcement = "╔═════════════════════════════════════════════╗\n   🛈       Now serving Customer ID " + to_string(customer.id) + "\n╚═════════════════════════════════════════════╝\n";
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout << "   🛈       Now serving Customer ID " << customer.id << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
@@ -123,6 +124,9 @@ void TellerInterface::serveCustomer()
 void TellerInterface::displayQueue()
 {
 	if (!queueManager.hasCustomers()) {
+		cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+		cout <<   "               Queue is Empty" << "\n";
+		cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 		return;
 	}
 
@@ -133,12 +137,12 @@ void TellerInterface::displayQueue()
 	queueManager.displayQueue();
 	cout << "╚══════╩══════════════════════════════╩═══════╩═══════════════╩═════════╝\n";
 
-	char choice = getYesNoChoice("Serve Customer [ Y - Yes | N - Exit ]: ");
+	char choice = getYesNoChoice("Serve Customer [ y - Yes | n - Exit ]: ");
 
 	switch (choice) {
 	case 'y':
 		serveCustomer();
-		if (!queueManager.hasCustomers())
+		if (queueManager.hasCustomers())
 		{
 			displayQueue();
 			break;
@@ -152,10 +156,11 @@ void TellerInterface::displayQueue()
 void TellerInterface::showStatistics()
 {
 	char choice;
-	int length = queueManager.getCurrentQueueLength();
+	int length;
 
 	while (true)
 	{
+		length = queueManager.getCurrentQueueLength();
 		stats.displayStatistics(queueManager.getPeakQueueLength(length));
 		choice = getYesNoChoice("Do you want to exit [ Y - Yes | N - No ]: ");
 

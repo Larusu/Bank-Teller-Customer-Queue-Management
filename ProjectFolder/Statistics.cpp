@@ -30,16 +30,19 @@ void Statistics::displayStatistics(int peakQueueLength)
 	cout << "╔══════════════════════════════════════════════════════╗" << "\n";
 	cout << "║                   Customer Report                    ║" << "\n";                                                                        
 	cout << "╠══════════╦═══════════╦═══════════╦═══════════════════╣" << "\n";
-	cout << "║ Overall  ║  Served   ║  Pending  ║ Peak Queue Length ║" << "\n";
+	cout << "║ Overall  ║ Completed ║  Pending  ║ Peak Queue Length ║" << "\n";
 	cout << "╠══════════╬═══════════╬═══════════╬═══════════════════╣" << "\n";
-	cout << "║    " << left << setw(6) << totalCustomersServed << "║    " << setw(7) << totalServed << "║    " << setw(7) << notYetServe << "║        " << setw(11) << peak << "║" << "\n";
+	cout << "║    " << left << setw(6) << totalCustomersServed << "║    " << setw(7) 
+	<< totalServed << "║    " << setw(7) << notYetServe << "║        " << setw(11) << peak << "║" << "\n";
 	cout << "╚══════════╩═══════════╩═══════════╩═══════════════════╝" << "\n\n";
 	cout << "╔═══════════════════════════════════════════════════╗" << "\n";
 	cout << "║                 No of Transactions                ║" << "\n";                                                              
 	cout << "╠══════════╦══════════╦═════════╦═════════╦═════════╣" << "\n";	
 	cout << "║ Transfer ║ Withdraw ║ Payment ║ Deposit ║ Account ║" << "\n";
 	cout << "╠══════════╬══════════╬═════════╬═════════╬═════════╣" << "\n";
-	cout << "║    " << setw(6) << totalCustomerTransfer << "║    " << setw(6) << totalCustomerWithdraw << "║   " << setw(6) << totalCustomerPayment << "║   " << setw(6) << totalCustomerDeposit << "║   " << setw(6) << totalCustomerAccount << "║" << "\n";
+	cout << "║    " << setw(6) << totalCustomerTransfer << "║    " << setw(6) << totalCustomerWithdraw << "║   " 
+	<< setw(6) << totalCustomerPayment << "║   " << setw(6) << totalCustomerDeposit << "║   " << setw(6) 
+	<< totalCustomerAccount << "║" << "\n";
 	cout << "╚══════════╩══════════╩═════════╩═════════╩═════════╝" << "\n\n";
 
 	cout << "╔═══════════════════════════════════════════════════╗" << "\n";

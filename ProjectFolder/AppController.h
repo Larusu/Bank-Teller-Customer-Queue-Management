@@ -12,7 +12,7 @@ class AppController
 {
 public:
     AppController()
-        : customerUI(queueManager, stats), tellerUI(queueManager, stats)
+        : customerUI(queueManager, stats), tellerUI(queueManager, stats, announcement)
     { }
 
     void run();  // Starts the application loop. Called from main().
@@ -22,7 +22,7 @@ private: // Private Attributes
     Statistics stats;            // Tracks and reports application statistics.
     CustomerInterface customerUI;
     TellerInterface tellerUI;
-
+    std::string announcement;
 private: 
     void showMasterMainMenu();        // Displays the top-level master menu 
 };

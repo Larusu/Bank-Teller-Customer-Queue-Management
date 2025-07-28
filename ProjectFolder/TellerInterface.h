@@ -10,13 +10,14 @@
 class TellerInterface
 {
 public:
-    TellerInterface(QueueManager& queueManager, Statistics& stats)
-        : queueManager(queueManager), stats(stats)
+    TellerInterface(QueueManager& queueManager, Statistics& stats, std::string& announce)
+        : queueManager(queueManager), stats(stats), g_announcement(announce)
     { }
     void showTellerMenu();         // Displays the teller main menu.
 private:
     QueueManager& queueManager;
     Statistics& stats;
+    std::string& g_announcement;
 private:
     // ---------- Teller ----------
     void addCustomer();          // Collects data and adds a customer to the queue.
