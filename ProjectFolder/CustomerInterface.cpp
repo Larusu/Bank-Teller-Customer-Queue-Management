@@ -105,15 +105,15 @@ void CustomerInterface::account(Customer& servedCustomer)
 	while (true)
 	{
 		cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-		cout << "║        " << firstName << "'s Details             ║" << "\n";
+		cout << "║               " << firstName << "'s Details             ║" << "\n";
 		cout << "╠═════════════════════════════════════════════╣" << "\n";
-		cout << "║ Full Name: " << servedCustomer.name << "║" << '\n';
-		cout << "║ Age:        " << servedCustomer.age << "        ║" << '\n';
-		cout << "║ Balance:    " << servedCustomer.bank.balance << "         ║" << '\n';
-		cout << "║ Bank ID:    " << servedCustomer.bank.bankId << "          ║" << '\n';
+		cout << "║ Full Name: " << left << setw(33) << servedCustomer.name << "║" << '\n';
+		cout << "║ Age:        " << left << setw(32) << servedCustomer.age << "║" << '\n';
+		cout << "║ Balance:    " << left << setw(32) << servedCustomer.bank.balance << "║" << '\n';
+		cout << "║ Bank ID:    " << left << setw(32) << servedCustomer.bank.bankId << "║" << '\n';
 		cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-		choice = getYesNoChoice("Do you want to exit [ Y - Yes ]: ");
+		choice = getYesNoChoice("Do you want to exit the bank[ Y - Yes , N - No]: ");
 
 		if (choice == 'y') {
 			clearScreen();
@@ -122,6 +122,7 @@ void CustomerInterface::account(Customer& servedCustomer)
 		if (choice == 'n')
 		{
 			clearScreen();
+			showCustomerMenu();
 			continue;
 		}
 	}
