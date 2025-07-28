@@ -311,3 +311,17 @@ const queue<Customer>& QueueManager::getPendingCustomers()
 {
 	return regularQueue;
 }
+
+void QueueManager::isServed(const Customer& customer)
+{
+	// Check if the customer is in the served list
+	for(int i = 0; i < servedCustomers.size(); i++)
+	{
+		if (servedCustomers[i].id == customer.id)
+		{
+			// If found, remove them from the served list
+			servedCustomers.erase(servedCustomers.begin() + i);
+			return;
+		}
+	}
+}

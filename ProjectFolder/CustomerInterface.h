@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 class CustomerInterface
 {
@@ -17,6 +18,7 @@ public:
 private:
 	QueueManager& queueManager;
 	Statistics& stats;
+	std::vector<Customer> existingCustomersData;
 private:
 	int findServedCustomerIndex(const std::string& name);   // Finds the index of a served customer by name.
 	void account(Customer& servedCustomer);   // Shows customer's account info.
@@ -25,5 +27,5 @@ private:
 	void transfer(Customer& servedCustomer);  // Handles fund transfer between accounts.
 	void payment(Customer& servedCustomer);   // Handles bill or other payments.
 	std::string getFirstName(const std::string& name);      // Extracts first name from full name string.
-
+	bool completeTransaction(const std::string& name);
 };

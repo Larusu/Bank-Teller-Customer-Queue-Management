@@ -52,4 +52,5 @@ public: // Public Methods
     int getLastServiceTime();                         // Returns the ETA or time of last served customer.
     const std::vector<Customer>& getServedCustomers(); // Returns reference to list of served customers.
     const std::queue<Customer>& getPendingCustomers(); // Returns reference to current customer queue.
+    void isServed(const Customer& customer);
 };

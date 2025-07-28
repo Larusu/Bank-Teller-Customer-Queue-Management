@@ -25,19 +25,7 @@ void CustomerInterface::showCustomerMenu()
 	fullName = firstName + " " + lastName;
 
 	// If the customer was served using their name, check their transaction type
-	int index = findServedCustomerIndex(fullName);
-	if (index > -1)
-	{
-		Customer getCustomer = queueManager.getServedCustomers()[index];
-
-		if (getCustomer.transactionType == "Account")		account(getCustomer);
-		else if (getCustomer.transactionType == "Deposit")	deposit(getCustomer);
-		else if (getCustomer.transactionType == "Withdraw")	withdraw(getCustomer);
-		else if (getCustomer.transactionType == "Transfer")	transfer(getCustomer);
-		else if (getCustomer.transactionType == "Payment")	payment(getCustomer);
-
-		return;
-	}
+	if(completeTransaction(fullName)) return;
 
 	if (queueManager.isExistingName(fullName))
 	{
@@ -45,8 +33,45 @@ void CustomerInterface::showCustomerMenu()
 		return;
 	}
 
-	age = inputInteger("Enter you age: ", minAge, maxAge);
-	balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
+	for(int i = 0 ; i < existingCustomersData.size(); i++)
+	{
+		if(toUpper(existingCustomersData[i].name) == toUpper(fullName))
+		{
+			Customer temp = existingCustomersData[i];
+			cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
+			cout << "│  1  │ Account                               │" << "\n";
+			cout << "├─────┼───────────────────────────────────────┤" << "\n";
+			cout << "│  2  │ Deposit                               │" << "\n";
+			cout << "├─────┼───────────────────────────────────────┤" << "\n";
+			cout << "│  3  │ Withdraw                              │" << "\n";
+			cout << "├─────┼───────────────────────────────────────┤" << "\n";
+			cout << "│  4  │ Transfer                              │" << "\n";
+			cout << "├─────┼───────────────────────────────────────┤" << "\n";
+			cout << "│  5  │ Payment                               │" << "\n";
+			cout << "└─────┴───────────────────────────────────────┘" << "\n";
+			choiceTransaction = inputInteger("Enter Transaction Type: ", choiceMin, choiceMax);
+			switch (choiceTransaction)
+			{
+			case 1: transaction = "Account"; break;
+			case 2: transaction = "Deposit"; break;
+			case 3: transaction = "Withdraw"; break;
+			case 4: transaction = "Transfer"; break;
+			case 5: transaction = "Payment"; break;
+			}
+
+			Customer c;
+			c.name = fullName;
+			c.age = temp.age;
+			c.bank.balance = temp.bank.balance;
+			c.bank.bankId = temp.bank.bankId;
+			c.transactionType = transaction;
+			c.priorityLevel = estimateServiceTime(transaction);
+			c.arrivalOrder = queueManager.getCurrentQueueLength();
+
+			queueManager.addCustomer(c);
+			return;
+		}
+	}
 
 	cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
 	cout << "│  1  │ Account                               │" << "\n";
@@ -60,7 +85,6 @@ void CustomerInterface::showCustomerMenu()
 	cout << "│  5  │ Payment                               │" << "\n";
 	cout << "└─────┴───────────────────────────────────────┘" << "\n";
 	choiceTransaction = inputInteger("Enter Transaction Type: ", choiceMin, choiceMax);
-
 	switch (choiceTransaction)
 	{
 	case 1: transaction = "Account"; break;
@@ -68,6 +92,22 @@ void CustomerInterface::showCustomerMenu()
 	case 3: transaction = "Withdraw"; break;
 	case 4: transaction = "Transfer"; break;
 	case 5: transaction = "Payment"; break;
+	}
+
+
+	if(!queueManager.isExistingName(fullName))
+	{
+		age = inputInteger("Enter you age: ", minAge, maxAge);
+		balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
+
+		char choice = getYesNoChoice("Confirm adding customer? [y or n]: ");
+
+		if(choice == 'n') return;
+
+		Customer c = queueManager.createCustomer(fullName, age, transaction, balance);
+		queueManager.addCustomer(c);
+		stats.recordService(c.estimatedServiceTime);
+		return;
 	}
 
 	Customer c = queueManager.createCustomer(fullName, age, transaction, balance);
@@ -79,22 +119,39 @@ void CustomerInterface::showCustomerMenu()
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout << "  🛈 Added to the queue! Wait for turn." << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
+}
 
-	/*cout << "┌─────────────────────────────────────────────┐" << "\n";
-	cout << "│                  CUSTOMER                   │" << "\n";
-	cout << "├─────┬───────────────────────────────────────┤" << "\n";
-	cout << "│  1  │ Account                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  2  │ Deposit                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  3  │ Withdraw                              │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  4  │ Transfer                              │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  5  │ Payment                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  6  │ Exit to Main Menu                     │" << "\n";
-	cout << "└─────┴───────────────────────────────────────┘" << "\n";*/
+bool CustomerInterface::completeTransaction(const string& name)
+{
+	int index = findServedCustomerIndex(name);
+	if (index < 0) return false;
+
+	Customer getCustomer = queueManager.getServedCustomers()[index]; 
+
+	if (getCustomer.transactionType == "Account")		account(getCustomer);
+	else if (getCustomer.transactionType == "Deposit")	deposit(getCustomer);
+	else if (getCustomer.transactionType == "Withdraw")	withdraw(getCustomer);
+	else if (getCustomer.transactionType == "Transfer")	transfer(getCustomer);
+	else if (getCustomer.transactionType == "Payment")	payment(getCustomer);
+
+	stats.setTotalServed();
+	queueManager.isServed(getCustomer);
+				existingCustomersData.push_back(getCustomer);
+	return true;
+}
+
+int CustomerInterface::findServedCustomerIndex(const std::string& name)
+{
+	vector<Customer> tempServeCustomer = queueManager.getServedCustomers();
+
+	for (int i = 0; i < tempServeCustomer.size(); i++)
+	{
+		if (trim(toUpper(name)) == trim(toUpper(tempServeCustomer[i].name)))
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 void CustomerInterface::account(Customer& servedCustomer)
@@ -308,26 +365,3 @@ string CustomerInterface::getFirstName(const std::string& name)
 	return firstName;
 }
 
-int CustomerInterface::findServedCustomerIndex(const std::string& name)
-{
-	/*vector<Customer> alreadyServe = queueManager.getServedCustomers();
-
-	for (Customer& c : alreadyServe)
-	{
-		if (trim(toUpper(name)) == trim(toUpper(c.name)))
-		{
-			return -1;
-		}
-	}*/
-
-	vector<Customer> tempServeCustomer = queueManager.getServedCustomers();
-
-	for (int i = 0; i < tempServeCustomer.size(); i++)
-	{
-		if (trim(toUpper(name)) == trim(toUpper(tempServeCustomer[i].name)))
-		{
-			return i;
-		}
-	}
-	return -1;
-}

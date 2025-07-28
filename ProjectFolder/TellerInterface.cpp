@@ -52,6 +52,13 @@ void TellerInterface::addCustomer()
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 
 	name = inputString("Enter Full Name: ");
+
+	if(queueManager.isExistingName(name))
+	{
+		cout << "Customer already have a pending transaction. " << endl;
+		return;
+	}
+
 	age = inputInteger("Enter Age: ", minAge, maxAge);
 	balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
 
@@ -78,6 +85,10 @@ void TellerInterface::addCustomer()
 	case 5: transaction = "Payment"; break;
 	}
 
+	char choice = getYesNoChoice("Confirm adding customer? [y or n]: ");
+
+	if(choice == 'n') return;
+	
 	Customer c = queueManager.createCustomer(name, age, transaction, balance);
 	queueManager.addCustomer(c);
 	stats.recordService(c.estimatedServiceTime);
@@ -93,7 +104,7 @@ void TellerInterface::serveCustomer()
 {
 	Customer customer;
 
-	if (queueManager.hasCustomers())
+	if (!queueManager.hasCustomers())
 	{
 		clearScreen();
 		cout << "Queue is empty. Insert a customer first." << endl;
@@ -101,7 +112,6 @@ void TellerInterface::serveCustomer()
 	}
 
 	customer = queueManager.serveCustomer();
-	stats.setTotalServed();
 
 	clearScreen();
 
