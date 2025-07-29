@@ -149,6 +149,15 @@ void CustomerInterface::choosingTransaction()
         }
         checkRegistered.close();
         
+        // Check if the customer is in the queue
+        if(queueManager.isInTheQueue(userBankId))
+        {
+            cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+            cout <<   "  🛈 You are still in the queue. Please wait." << "\n";
+            cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+            return;
+        }
+
         // If the Bank ID was found, proceed
         if (found)
         {
@@ -207,7 +216,7 @@ void CustomerInterface::choosingTransaction()
 
     // Save the customer's queue number to a file named after their first name.
     // This helps the customer identify their unique ID and know their position in line.
-    string nameTxt = getFirstName(c.name) + ".txt";
+    string nameTxt = c.name + ".txt";
     ofstream printCustomerCount("customer_queue_id/" + nameTxt);
     printCustomerCount << "Your unique customer ID is " << c.id << ". Please wait until your number is called.";
     printCustomerCount.close();
@@ -297,6 +306,9 @@ void CustomerInterface::completeTransaction()
 	else if (transactionType == "Withdraw")	withdraw(handleTransaction);
 	else if (transactionType == "Transfer")	transfer(handleTransaction);
 	else if (transactionType == "Payment")	payment(handleTransaction);
+
+    // Incerement total served for statistics
+    stats.setTotalServed();
 
     // Remove the notification from the announcement 
     if (g_announcements.count(handleTransaction.bank.bankId)) 

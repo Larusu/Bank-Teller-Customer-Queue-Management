@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <map>
+#include <ctime>
+
 // For file handling
 #include <sys/stat.h>
 #include <sys/types.h>

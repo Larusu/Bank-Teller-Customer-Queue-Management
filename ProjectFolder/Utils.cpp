@@ -214,8 +214,6 @@ string Utils::generateBankId()
 	}
 	registered.close();
 
-	srand(time(0)); 
-
 	string newCode;
 	do {
         newCode = Utils::generateRandomDigits(3) + '-' + Utils::generateRandomDigits(3);
@@ -226,7 +224,6 @@ string Utils::generateBankId()
 
 string Utils::generateRandomDigits(int length)
 {
-	srand(time(0)); 
 	string code = "";
 
 	while(code.length() < length)

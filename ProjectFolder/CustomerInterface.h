@@ -25,7 +25,7 @@ private:
 	QueueManager& queueManager;
 	Statistics& stats;
 	std::vector<Customer> waitingForCompletion;
-    std::map<std::string, int> g_announcements;
+    std::map<std::string, int>& g_announcements;
 private:
     void registerCustomer();                // Handles register of customer's account
     void choosingTransaction();             // Handles input transaction and inserting in queue

@@ -5,6 +5,8 @@ using namespace Utils;
 
 void AppController::run()
 {
+	srand(time(0));
+	
 	// Create folder if it doesn't exist
     #ifdef _WIN32
         _mkdir("customer_receipts");
