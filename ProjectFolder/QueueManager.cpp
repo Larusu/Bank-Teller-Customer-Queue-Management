@@ -243,7 +243,7 @@ void QueueManager::deductFromBalance(double amount, const string& bankId)
 	}
 }
 
-void QueueManager::updateCustomersBalance(double balance, const string& bankId, double (*op)(double, double), const string& recipientId = "")
+void QueueManager::updateCustomersBalance(double balance, const string& bankId, double (*op)(double, double), const string& recipientId)
 {
 	ifstream readFile("RegisteredCustomers.txt");
 	vector<string> storingPerLine;

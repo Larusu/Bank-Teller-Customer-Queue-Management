@@ -477,7 +477,7 @@ string CustomerInterface::getFirstName(const string& name)
 void CustomerInterface::printTransactionReceipt(
     const Customer& customer, 
     const string& transactionType, 
-    const vector<string>& additionalInfo = {})
+    const vector<string>& additionalInfo)
 {
     // Create folder if it doesn't exist
     #ifdef _WIN32
