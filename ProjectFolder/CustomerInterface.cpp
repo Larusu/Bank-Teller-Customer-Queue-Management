@@ -63,6 +63,10 @@ void CustomerInterface::registerCustomer()
     age = inputInteger("Enter your age: ", minAge, maxAge);
     balance = inputDouble("Enter initial deposit: ", minBal, maxBal);
 
+    // Prompt to confirm details, otherwise exit
+    char choice = getYesNoChoice("Confirm details? [y or n]: ");
+    if(choice == 'n') return;
+
     // Proper formatting and generating ID
 	fullName = firstName + " " + lastName;
     fullName = nameFormatter(fullName);
@@ -183,6 +187,14 @@ void CustomerInterface::choosingTransaction()
         case 5: transaction = "Payment"; break;
     }
 
+    // Prompt to confirm details, otherwise exit
+    char choice = getYesNoChoice("Confirm details? [y or n]: ");
+    if(choice == 'n') 
+    { 
+        clearScreen();
+        return;
+    }
+
     // Create a new Customer object with the collected data
     Customer c = queueManager.createCustomer(name, age, transaction, balance, userBankId);
 	// Add the customer to the queue for service
@@ -190,11 +202,18 @@ void CustomerInterface::choosingTransaction()
     // Record service time statistics
 	stats.recordService(c.estimatedServiceTime);
 
+    // Save the customer's queue number to a file named after their first name.
+    // This helps the customer identify their unique ID and know their position in line.
+    string nameTxt = getFirstName(c.name) + ".txt";
+    ofstream printCustomerCount(nameTxt);
+    printCustomerCount << "Your unique customer ID is " << c.id << ". Please wait until your number is called.";
+    printCustomerCount.close();
+
     clearScreen();
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-	cout << "      🛈 Added to the queue! Wait for turn." << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
+	cout <<   "   Check" << nameTxt << "for queue number" << "\n";
+    cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 }
 
 void CustomerInterface::completeTransaction()
@@ -276,6 +295,11 @@ void CustomerInterface::completeTransaction()
 	else if (transactionType == "Transfer")	transfer(handleTransaction);
 	else if (transactionType == "Payment")	payment(handleTransaction);
 
+    // Remove the notification from the announcement 
+    if (g_announcements.count(handleTransaction.bank.bankId)) 
+    {
+        g_announcements.erase(handleTransaction.bank.bankId);
+    }
     clearScreen();
     cout << "\n╔═════════════════════════════════════════════╗" << "\n";
     cout <<   "      Thank you for using JRL Bank Teller      " << "\n";
