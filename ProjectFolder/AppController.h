@@ -7,6 +7,12 @@
 
 #include <iostream>
 #include <map>
+// For file handling
+#include <sys/stat.h>
+#include <sys/types.h>
+#ifdef _WIN32
+#include <direct.h> 
+#endif
 
 // Handles the main application loop and menu navigation.
 class AppController

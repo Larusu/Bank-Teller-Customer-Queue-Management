@@ -24,6 +24,7 @@ namespace Utils
     double inputDouble(const std::string& prompt, double min, double max);
     std::string inputBankId(const std::string& prompt);
     std::string generateBankId();
+    std::string generateRandomDigits(int length);
     std::string nameFormatter(const std::string& name); // Formats name into a standard format.
     std::string formatMoney(double amount);
 }

@@ -39,34 +39,13 @@ bool QueueManager::isInTheQueue(const string& bankId)
 	return false;
 }
 
-Customer QueueManager::createCustomer(const string& name, int age, const string& transactionType, double balance)
-{
-	Customer c;
-	
-	customerCounter++;
-	c.name = nameFormatter(name);
-	c.id = customerCounter;
-	c.bank.bankId = generateBankId();
-	c.age = age;
-	c.bank.balance = balance;
-	c.transactionType = transactionType;
-	c.estimatedServiceTime = estimateServiceTime(transactionType);
-	c.arrivalOrder = regularQueue.size();
-
-	if (isVip(name)) { c.priorityLevel = 2; }
-	else if (c.age >= 60) { c.priorityLevel = 1; }
-	else { c.priorityLevel = 0; }
-
-	return c;
-}
-
 Customer QueueManager::createCustomer(const string& name, int age, const string& transactionType, double balance, const string& bankID)
 {
 	Customer c;
 	
 	customerCounter++;
 	c.name = nameFormatter(name);
-	c.id = customerCounter;
+	c.id = stoi(generateRandomDigits(2));
 	c.bank.bankId = bankID;
 	c.age = age;
 	c.bank.balance = balance;

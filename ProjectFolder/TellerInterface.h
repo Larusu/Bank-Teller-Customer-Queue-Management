@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <map>
 
 class TellerInterface
@@ -23,10 +24,8 @@ private:
     std::map<std::string, int>& g_announcements;
 private:
     // ---------- Teller ----------
-    void addCustomer();          // Collects data and adds a customer to the queue.
+    void registerCustomer();          // Collects data and adds a customer to the queue.
     void serveCustomer();        // Serves the next customer in the queue.
     void displayQueue();         // Displays current queue of customers.
     void showStatistics();       // Displays statistics like served customers, transaction counts, etc.
-
-    bool isCustomerInQueueByName(const std::string& fullName);
 };

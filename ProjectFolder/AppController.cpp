@@ -5,9 +5,21 @@ using namespace Utils;
 
 void AppController::run()
 {
+	// Create folder if it doesn't exist
+    #ifdef _WIN32
+        _mkdir("customer_receipts");
+		_mkdir("customer_bank_id");
+		_mkdir("customer_queue_id");
+    #else
+        mkdir("customer_receipts", 0777);
+		mkdir("customer_bank_id", 0777);
+    	mkdir("customer_queue_id", 0777);
+    #endif
+
 	Customer customer;
 	int choice = 0, choiceMin = 1, choiceMax = 3;
 
+	// Run main loop
 	while (true)
 	{
 		printAnnouncements();
@@ -29,28 +41,28 @@ void AppController::run()
 
 void AppController::showMasterMainMenu()
 {
-		cout << "┌─────────────────────────────────────────────┐" << "\n";
-		cout << "│               JRL BANK TELLER               │" << "\n";
-		cout << "├─────┬───────────────────────────────────────┤" << "\n";
-		cout << "│  1  │ Enter Bank as Customer                │" << "\n";
-		cout << "├─────┼───────────────────────────────────────┤" << "\n";
-		cout << "│  2  │ Enter Bank as Teller                  │" << "\n";
-		cout << "├─────┼───────────────────────────────────────┤" << "\n";
-		cout << "│  3  │ Exit Bank                             │" << "\n";
-		cout << "└─────┴───────────────────────────────────────┘" << "\n";
+	cout << "┌─────────────────────────────────────────────┐" << "\n";
+	cout << "│               JRL BANK TELLER               │" << "\n";
+	cout << "├─────┬───────────────────────────────────────┤" << "\n";
+	cout << "│  1  │ Enter Bank as Customer                │" << "\n";
+	cout << "├─────┼───────────────────────────────────────┤" << "\n";
+	cout << "│  2  │ Enter Bank as Teller                  │" << "\n";
+	cout << "├─────┼───────────────────────────────────────┤" << "\n";
+	cout << "│  3  │ Exit Bank                             │" << "\n";
+	cout << "└─────┴───────────────────────────────────────┘" << "\n";
 }
 
 void AppController::printAnnouncements()
 {
 	if(!announcements.empty())
 	{
-			int count = 1;
-			cout << "╔═════════════════════════════════════════════╗\n";
-			for(const auto& pair : announcements)
-			{
-					cout << "    " << count << "       Now serving Customer ID " << pair.second << endl;
-					count++;
-			}
-			cout << "╚═════════════════════════════════════════════╝\n";
+		int count = 1;
+		cout << "╔═════════════════════════════════════════════╗\n";
+		for(const auto& pair : announcements)
+		{
+			cout << "    " << count << "       Now serving Customer ID " << pair.second << endl;
+			count++;
+		}
+		cout << "╚═════════════════════════════════════════════╝\n";
 	}
 }

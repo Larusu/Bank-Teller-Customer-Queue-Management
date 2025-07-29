@@ -10,15 +10,8 @@
 #include <iomanip>
 #include <ctime>
 #include <map>
-
-// For file handling
 #include <sstream>
 #include <fstream>
-#include <sys/stat.h>
-#include <sys/types.h>
-#ifdef _WIN32
-#include <direct.h> 
-#endif
 
 class CustomerInterface
 {

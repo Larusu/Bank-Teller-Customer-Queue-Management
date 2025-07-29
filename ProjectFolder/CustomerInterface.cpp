@@ -81,7 +81,7 @@ void CustomerInterface::registerCustomer()
     nameToTxt += ".txt";
 
     // Write bank ID to receipt file
-    ofstream getBankId(nameToTxt);
+    ofstream getBankId("customer_bank_id/" + nameToTxt);
     getBankId << "Bank ID: " << bankId;
     getBankId.close();
 
@@ -95,7 +95,10 @@ void CustomerInterface::registerCustomer()
     registered.close();
 
     clearScreen();
-    cout << "Please check your Bank ID through " << nameToTxt << " then go to transaction to complete the queue" << endl;
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+	cout <<   "   Please check " << nameToTxt << "\n";
+    cout <<   "     for Bank ID to proceed to transaction        " << '\n';
+    cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 }
 
 void CustomerInterface::choosingTransaction()
@@ -205,14 +208,14 @@ void CustomerInterface::choosingTransaction()
     // Save the customer's queue number to a file named after their first name.
     // This helps the customer identify their unique ID and know their position in line.
     string nameTxt = getFirstName(c.name) + ".txt";
-    ofstream printCustomerCount(nameTxt);
+    ofstream printCustomerCount("customer_queue_id/" + nameTxt);
     printCustomerCount << "Your unique customer ID is " << c.id << ". Please wait until your number is called.";
     printCustomerCount.close();
 
     clearScreen();
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-	cout <<   "   Check" << nameTxt << "for queue number" << "\n";
+	cout <<   "   Check " << nameTxt << " for queue number" << "\n";
     cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 }
 
@@ -332,8 +335,10 @@ void CustomerInterface::account(const Customer &customer)
     cout << "║ Bank ID:    " << left << setw(32) << customer.bank.bankId << "║" << '\n';
     cout << "╚═════════════════════════════════════════════╝" << "\n";
 
+    // Print receipt to a File
     printTransactionReceipt(customer, "Account Info");
 
+    // Check if customer wants to transact again
     if (handleExitPrompt()) return;
     showCustomerMenu();
 }
@@ -348,21 +353,41 @@ void CustomerInterface::deposit(const Customer &customer)
 
     string formattedName = firstName + "'s Depositing";
 
-    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-    cout << "╚═════════════════════════════════════════════╝" << "\n";
-    depositAmount = inputDouble("Deposit Amount: ", minDeposit, maxDeposit);
+    int attempt = 0;
+    while(attempt < 4)
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout <<   "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+        depositAmount = inputDouble("Deposit Amount: ", minDeposit, maxDeposit);
+
+        char choice = getYesNoChoice("Enter details? [y or n]: ");
+        if(choice != 'y') break;
+
+        clearScreen();
+        attempt++;
+    }
+    if(attempt > 3)
+    {
+        clearScreen();
+        cout << "Exceed attempts. Please try again later.\n";
+        return;
+    }
 
     queueManager.depositMoney(depositAmount, bankId);
     
+    // Print receipt to a file
     stringstream depositLabel, newBalanceLabel;
+
     depositLabel << left << setw(16) << "Deposited: " << right << setw(25) << formatMoney(depositAmount);
     newBalanceLabel << left << setw(16) << "New Balance: " << right << setw(25) << formatMoney(depositAmount + customer.bank.balance);
+
     printTransactionReceipt(customer, "Deposit", {
         depositLabel.str(),
         newBalanceLabel.str()
     });
 
+    // Check if customer wants to transact again
     if (handleExitPrompt()) return;
     showCustomerMenu();
 }
@@ -377,24 +402,42 @@ void CustomerInterface::withdraw(const Customer &customer)
 
     string formattedName = firstName + "'s Withdrawing";
 
-    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-    cout << "╚═════════════════════════════════════════════╝" << "\n";
-    cout << "Available balance: " << maxWithdraw << endl;
-    withdrawAmount = inputDouble("Withdraw Amount: ", minWithdraw, maxWithdraw);
+    int attempt = 0;
+    while(attempt < 4)
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout <<   "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+        cout << "Available balance: " << maxWithdraw << endl;
+        withdrawAmount = inputDouble("Withdraw Amount: ", minWithdraw, maxWithdraw);
+
+        char choice = getYesNoChoice("Confirm details? [y or n]: ");
+        if(choice == 'y') break;
+        
+        clearScreen();
+        attempt++;
+    }
+    if(attempt > 3)
+    {
+        clearScreen();
+        cout << "Exceed attempts. Please try again later.\n";
+        return;
+    }
 
     queueManager.deductFromBalance(withdrawAmount, bankId);
 
+    // Print receipt to file
     stringstream withdrawLabel, remainingLabel;
 
     withdrawLabel << left << setw(16) << "Withdrawn:" << right << setw(25) << formatMoney(withdrawAmount);
     remainingLabel << left << setw(16) << "Remaining Balance:" << right << setw(23) << formatMoney(customer.bank.balance - withdrawAmount);
 
-    printTransactionReceipt(customer, "Withdraw", {
+    printTransactionReceipt(customer, "Withdrawal", {
         withdrawLabel.str(),
         remainingLabel.str()
     });
 
+    // Check if customer wants to transact again
     if (handleExitPrompt()) return;
     showCustomerMenu();
 }
@@ -412,8 +455,8 @@ void CustomerInterface::transfer(const Customer &customer)
     string formattedName = firstName + "'s Transferring";
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
+    cout <<   "║             " << left << setw(32) << formattedName << "║" << "\n";
+	cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 	cout << "Available balance: " << maxTransfer << endl;
 
     // Ask for recipient's Bank ID, max 3 attempts
@@ -464,12 +507,13 @@ void CustomerInterface::transfer(const Customer &customer)
     recipientLabel << left << setw(16) << "Recipient ID:" << right << setw(25) << recipientId;
     remainingLabel << left << setw(16) << "Remaining:" << right << setw(25) << formatMoney(customer.bank.balance - transferAmount);
 
-    printTransactionReceipt(customer, "Transfer", {
+    printTransactionReceipt(customer, "Fund Transfer", {
         transferredLabel.str(),
         recipientLabel.str(),
         remainingLabel.str()
     });
 
+    // Check if customer wants to transact again
     if (handleExitPrompt()) return;
     showCustomerMenu();
 }
@@ -485,28 +529,45 @@ void CustomerInterface::payment(const Customer &customer)
 
     string formattedName = firstName + "'s Payment";
 
-	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
-	cout << "Available balance: " << maxPayment << endl;
-	paymentPurpose = inputString("Enter Purpose of Payment: ");
-	paymentAmount = inputDouble("Payment Amount: ", minPayment, maxPayment);
+    int attempt = 0;
+    while(attempt < 4)
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout <<   "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+        cout << "Available balance: " << maxPayment << endl;
+        paymentPurpose = inputString("Enter Purpose of Payment: ");
+        paymentAmount = inputDouble("Payment Amount: ", minPayment, maxPayment);
+
+        char choice = getYesNoChoice("Confirm details? [y or n]");
+        if(choice == 'y') break;
+
+        clearScreen();
+        attempt++;
+    }
+    if(attempt > 3)
+    {
+        clearScreen();
+        cout << "Exceed attempts. Please try again later.\n";
+        return;
+    }
 
 	queueManager.deductFromBalance(paymentAmount, bankId);
 
+    // Print transcation receipt to a file
     stringstream paymentLabel, purposeLabel, remainingLabel;
 
     paymentLabel << left << setw(16) << "Payment:" << right << setw(25) << formatMoney(paymentAmount);
     purposeLabel << left << setw(16) << "To:" << right << setw(25) << paymentPurpose;
     remainingLabel << left << setw(16) << "Remaining:" << right << setw(25) << formatMoney(customer.bank.balance - paymentAmount);
 
-    printTransactionReceipt(customer, "Deposit", {
+    printTransactionReceipt(customer, "Payment", {
         paymentLabel.str(),
         purposeLabel.str(),
         remainingLabel.str()
     });
 
-
+    // Check if customer wants to transact again
 	if (handleExitPrompt()) return;
     showCustomerMenu();
 }
@@ -554,19 +615,12 @@ void CustomerInterface::printTransactionReceipt(
     const string& transactionType, 
     const vector<string>& additionalInfo)
 {
-    // Create folder if it doesn't exist
-    #ifdef _WIN32
-        _mkdir("receipts");
-    #else
-        mkdir("receipts", 0777);
-    #endif
-
     // Generate unique filename
     time_t now = time(0);
     tm* localTime = localtime(&now);
 
     char filename[100];
-    strftime(filename, sizeof(filename), "receipts/receipt_%Y%m%d_%H%M%S.txt", localTime);
+    strftime(filename, sizeof(filename), "customer_receipts/receipt_%Y%m%d_%H%M%S.txt", localTime);
 
     char dateStr[11]; // MM-DD-YYYY = 10 chars + null
     char timeStr[6];  // HH-MM = 5 chars + null
