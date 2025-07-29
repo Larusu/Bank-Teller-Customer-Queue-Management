@@ -22,7 +22,7 @@ void TellerInterface::showTellerMenu()
 		cout << "├─────┼───────────────────────────────────────┤" << "\n";
 		cout << "│  4  │ Show Statistics                       │" << "\n";
 		cout << "├─────┼───────────────────────────────────────┤" << "\n";
-		cout << "│  5  │ Exit to Main Menu                     │" << "\n";
+		cout << "│  5  │ Exit                                  │" << "\n";
 		cout << "└─────┴───────────────────────────────────────┘" << "\n";
 
 		choice = inputInteger("Choice: ", choiceMin, choiceMax);

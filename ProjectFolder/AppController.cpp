@@ -18,7 +18,10 @@ void AppController::run()
 		{
 			case 1: customerUI.showCustomerMenu();	break;
 			case 2: tellerUI.showTellerMenu();	break;
-			case 3: return;
+			case 3: cout << "╔═════════════════════════════════════════════╗" << "\n";
+                	cout << "      Thank you for using JRL Bank Teller      " << "\n";
+                	cout << "╚═════════════════════════════════════════════╝" << "\n";
+					return;
 			default: cout << "Invalid choice!"; break;
 		}
 	}
@@ -27,7 +30,7 @@ void AppController::run()
 void AppController::showMasterMainMenu()
 {
 		cout << "┌─────────────────────────────────────────────┐" << "\n";
-		cout << "│                  CUSTOMER                   │" << "\n";
+		cout << "│               JRL BANK TELLER               │" << "\n";
 		cout << "├─────┬───────────────────────────────────────┤" << "\n";
 		cout << "│  1  │ Enter Bank as Customer                │" << "\n";
 		cout << "├─────┼───────────────────────────────────────┤" << "\n";
