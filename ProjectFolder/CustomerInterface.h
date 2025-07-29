@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "QueueManager.h"
 #include "Customer.h"
 #include "Statistics.h"
@@ -7,6 +7,17 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <iomanip>
+#include <ctime>
+
+// For file handling
+#include <sstream>
+#include <fstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#ifdef _WIN32
+#include <direct.h> 
+#endif
 
 class CustomerInterface
 {
@@ -14,18 +25,28 @@ public:
 	CustomerInterface(QueueManager& queueManager, Statistics& stats)
 		: queueManager( queueManager ), stats( stats )
 	{ }
-	void showCustomerMenu();								// Displays the customer main menu.
+    void showCustomerMenu();
 private:
 	QueueManager& queueManager;
 	Statistics& stats;
-	std::vector<Customer> existingCustomersData;
+	std::vector<Customer> waitingForCompletion;
 private:
-	int findServedCustomerIndex(const std::string& name);   // Finds the index of a served customer by name.
-	void account(Customer& servedCustomer);   // Shows customer's account info.
-	void deposit(Customer& servedCustomer);   // Handles deposit transactions.
-	void withdraw(Customer& servedCustomer);  // Handles withdrawal transactions.
-	void transfer(Customer& servedCustomer);  // Handles fund transfer between accounts.
-	void payment(Customer& servedCustomer);   // Handles bill or other payments.
-	std::string getFirstName(const std::string& name);      // Extracts first name from full name string.
-	bool completeTransaction(const std::string& name);
+    void registerCustomer();                // Handles register of customer's account
+    void choosingTransaction();             // Handles input transaction and inserting in queue
+    void completeTransaction();             // Handles completion of transaction
+
+    void account(const Customer& customer);   // Shows customer's account info.
+	void deposit(const Customer& customer);   // Handles deposit transactions.
+	void withdraw(const Customer& customer);  // Handles withdrawal transactions.
+	void transfer(const Customer& customer);  // Handles fund transfer between accounts.
+	void payment(const Customer& customer);   // Handles bill or other payments.
+
+    // Private Utilities
+    bool isInTheWaitingList(const std::string& bankId);
+    std::string getFirstName(const std::string& name);
+    void printTransactionReceipt(const Customer& customer, 
+            const std::string& transactionType, 
+            const std::vector<std::string>& additionalInfo = {});
+    bool isBankIdRegistered(const std::string& bankId);
+    bool handleExitPrompt();
 };

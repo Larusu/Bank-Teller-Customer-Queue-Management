@@ -1,4 +1,4 @@
-﻿#include "CustomerInterface.h"
+#include "CustomerInterface.h"
 
 using namespace std;
 using namespace Utils;
@@ -7,252 +7,350 @@ void CustomerInterface::showCustomerMenu()
 {
 	clearScreen();
 
-	double balance = 0.0, minBal = 500.0, maxBal = 10000000.0;
+    int choice = 0, choiceMin = 1, choiceMax = 4;
+    
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout <<   "║            WELCOME / INSTRUCTIONS           ║" << "\n";
+    cout <<   "╠═════════════════════════════════════════════╣" << "\n";
+    cout <<   "║    Please register first before choosing    ║" << "\n";
+    cout <<   "║       a transaction. If you're already      ║" << "\n";
+    cout <<   "║     registered, you may proceed directly    ║" << "\n";
+    cout <<   "║            using your Bank ID.              ║" << "\n";
+    cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+    cout << "┌─────────────────────────────────────────────┐" << "\n";
+    cout << "│             CUSTOMER INTERFACE              │" << "\n";
+    cout << "├─────┬───────────────────────────────────────┤" << "\n";
+    cout << "│  1  │ Register                              │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  2  │ Choose a Transaction                  │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  3  │ Complete the Transaction              │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  4  │ Exit                                  │" << "\n";
+    cout << "└─────┴───────────────────────────────────────┘" << "\n";
+
+    choice = inputInteger("Choice: ", choiceMin, choiceMax);
+    switch (choice)
+    {
+        case 1: registerCustomer(); break;
+        case 2: choosingTransaction(); break;
+        case 3: completeTransaction(); break;
+        case 4: return;
+    }
+
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout <<   "            Thank you for visiting.            " << "\n";
+    cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+}
+
+void CustomerInterface::registerCustomer()
+{
+    // Declare customer details 
+    double balance = 0.0, minBal = 500.0, maxBal = 10000000.0;
 	string firstName = "", lastName = "", fullName = "", transaction = "";
 	int age = 0, minAge = 18, maxAge = 99;
-	int choiceTransaction = 0, choiceMin = 1, choiceMax = 5;
+    string bankId;
 
-	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-	cout << "║             Enter Your Details              ║" << "\n";
-	cout << "╠═════════════════════════════════════════════╣" << "\n";
-	cout << "║    If your name is already in the queue,    ║" << "\n";
-	cout << "║      you will automatically proceed to      ║" << "\n";
-	cout << "║          the transaction process.           ║" << "\n";
-	cout << "║      Please enter your name correctly.      ║" << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
-	lastName = inputString("Enter your Last Name: ");
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout << "║              Enter Your Details             ║" << "\n";
+    cout << "╠═════════════════════════════════════════════╣" << "\n";
+    cout << "║   Please fill in all the required fields.   ║" << "\n";
+    cout << "║   A receipt with your Bank ID will be       ║" << "\n";
+    cout << "║   provided to you via a .txt file.          ║" << "\n";
+    cout << "╚═════════════════════════════════════════════╝" << "\n";
+
+    // Prompts user to enter their informatoion
+    lastName = inputString("Enter your Last Name: ");
 	firstName = inputString("Enter your First Name: ");
+    age = inputInteger("Enter your age: ", minAge, maxAge);
+    balance = inputDouble("Enter initial deposit: ", minBal, maxBal);
+
+    // Proper formatting and generating ID
 	fullName = firstName + " " + lastName;
+    fullName = nameFormatter(fullName);
+    bankId = generateBankId(); 
 
-	// If the customer was served using their name, check their transaction type
-	if(completeTransaction(fullName)) return;
+    // create receipt using full name
+    string nameToTxt;
+    for(char c : fullName)
+    {
+        nameToTxt += (isspace(c)) ? '_' : c;
+    }
+    nameToTxt += ".txt";
 
-	if (queueManager.isExistingName(fullName))
-	{
-		cout << "You already have a pending transaction. Please wait for your turn." << endl;
-		return;
-	}
+    // Write bank ID to receipt file
+    ofstream getBankId(nameToTxt);
+    getBankId << bankId;
+    getBankId.close();
 
-	for(int i = 0 ; i < existingCustomersData.size(); i++)
-	{
-		if(toUpper(existingCustomersData[i].name) == toUpper(fullName))
-		{
-			Customer temp = existingCustomersData[i];
-			cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
-			cout << "│  1  │ Account                               │" << "\n";
-			cout << "├─────┼───────────────────────────────────────┤" << "\n";
-			cout << "│  2  │ Deposit                               │" << "\n";
-			cout << "├─────┼───────────────────────────────────────┤" << "\n";
-			cout << "│  3  │ Withdraw                              │" << "\n";
-			cout << "├─────┼───────────────────────────────────────┤" << "\n";
-			cout << "│  4  │ Transfer                              │" << "\n";
-			cout << "├─────┼───────────────────────────────────────┤" << "\n";
-			cout << "│  5  │ Payment                               │" << "\n";
-			cout << "└─────┴───────────────────────────────────────┘" << "\n";
-			choiceTransaction = inputInteger("Enter Transaction Type: ", choiceMin, choiceMax);
-			switch (choiceTransaction)
-			{
-			case 1: transaction = "Account"; break;
-			case 2: transaction = "Deposit"; break;
-			case 3: transaction = "Withdraw"; break;
-			case 4: transaction = "Transfer"; break;
-			case 5: transaction = "Payment"; break;
-			}
+    // Save customer info to RegisteredCustomers file 
+    ofstream registered;
+    registered.open("RegisteredCustomers.txt", ios::app);
+    registered << bankId << "|"
+               << fullName << "|"
+               << age << "|"
+               << balance << '\n';
+    registered.close();
+}
 
-			Customer c;
-			c.name = temp.name;
-			c.age = temp.age;
-			c.bank.balance = temp.bank.balance;
-			c.bank.bankId = temp.bank.bankId;
-			c.transactionType = transaction;
-			c.priorityLevel = estimateServiceTime(transaction);
-			c.arrivalOrder = queueManager.getCurrentQueueLength();
+void CustomerInterface::choosingTransaction()
+{
+    // Declare customer details and Bank ID
+    string name, transaction, userBankId;
+    int age;
+    double balance;
 
-			queueManager.addCustomer(c);
-			return;
-		}
-	}
+    // Display Header
+    cout << "┌─────────────────────────────────────────────┐" << "\n";
+    cout << "│            CHOOSE A TRANSACTION             │" << "\n";
+    cout << "└─────────────────────────────────────────────┘" << "\n";
 
-	cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
-	cout << "│  1  │ Account                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  2  │ Deposit                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  3  │ Withdraw                              │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  4  │ Transfer                              │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  5  │ Payment                               │" << "\n";
-	cout << "└─────┴───────────────────────────────────────┘" << "\n";
-	choiceTransaction = inputInteger("Enter Transaction Type: ", choiceMin, choiceMax);
-	switch (choiceTransaction)
-	{
-	case 1: transaction = "Account"; break;
-	case 2: transaction = "Deposit"; break;
-	case 3: transaction = "Withdraw"; break;
-	case 4: transaction = "Transfer"; break;
-	case 5: transaction = "Payment"; break;
-	}
+    while(true)
+    {
+        string line, storedBankId;
 
+        // Prompt user to enter their Bank ID
+        userBankId = inputBankId("Enter your BankID: ");
 
-	if(!queueManager.isExistingName(fullName))
-	{
-		age = inputInteger("Enter your age: ", minAge, maxAge);
-		balance = inputDouble("Enter initial deposit: ", minBal, maxBal);
+        // For tracking if found
+        bool found = false;
 
-		char choice = getYesNoChoice("Confirm adding customer? [y or n]: ");
+        // Open the file containing registered customers
+        ifstream checkRegistered("RegisteredCustomers.txt");
+        while(getline(checkRegistered, line))
+        {
+            stringstream ss(line); 
+            string tempName, ageStr, balanceStr;
 
-		if(choice == 'n') return;
+            getline(ss, storedBankId, '|');
+            getline(ss, tempName, '|');
+            getline(ss, ageStr, '|');
+            getline(ss, balanceStr, '|');
 
-		Customer c = queueManager.createCustomer(fullName, age, transaction, balance);
-		queueManager.addCustomer(c);
-		stats.recordService(c.estimatedServiceTime);
-		return;
-	}
+            // If the stored Bank ID matches the input, capture the user's details
+            if (storedBankId == userBankId)
+            {
+                name = tempName;
+                age = stoi(ageStr);
+                balance = stod(balanceStr);
+                found = true;
+                break; // Stop searching
+            }
+        }
+        checkRegistered.close();
+        
+        // If the Bank ID was found, proceed
+        if (found)
+        {
+            cout << "Bank ID found. Proceeding with transaction...\n";
+            break;
+        }
+        else
+        {
+            cout << "Bank ID Not Found.\n";
+        }
 
-	Customer c = queueManager.createCustomer(fullName, age, transaction, balance);
-	queueManager.addCustomer(c);
+        // If not found, ask if the user wants to exit
+        char exit = getYesNoChoice("Do you want to exit? [y or n]: ");
+        if(exit == 'y') return;
+    } 
+
+    // Define transaction range and display options
+    int choiceTransaction = 0, choiceMin = 1, choiceMax = 5;
+    cout << "\n┌─────┬─────── Transaction Types ─────────────┐" << "\n";
+    cout << "│  1  │ Account                               │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  2  │ Deposit                               │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  3  │ Withdraw                              │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  4  │ Transfer                              │" << "\n";
+    cout << "├─────┼───────────────────────────────────────┤" << "\n";
+    cout << "│  5  │ Payment                               │" << "\n";
+    cout << "└─────┴───────────────────────────────────────┘" << "\n";
+
+    choiceTransaction = inputInteger("Enter Transaction Type: ", choiceMin, choiceMax);
+    
+    switch (choiceTransaction)
+    {
+        case 1: transaction = "Account"; break;
+        case 2: transaction = "Deposit"; break;
+        case 3: transaction = "Withdraw"; break;
+        case 4: transaction = "Transfer"; break;
+        case 5: transaction = "Payment"; break;
+    }
+
+    // Create a new Customer object with the collected data
+    Customer c = queueManager.createCustomer(name, age, transaction, balance, userBankId);
+	// Add the customer to the queue for service
+    queueManager.addCustomer(c);
+    // Record service time statistics
 	stats.recordService(c.estimatedServiceTime);
 
-	clearScreen();
+    clearScreen();
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout << "  🛈 Added to the queue! Wait for turn." << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 }
 
-bool CustomerInterface::completeTransaction(const string& name)
+void CustomerInterface::completeTransaction()
 {
-	int index = findServedCustomerIndex(name);
-	if (index < 0) return false;
+    string userBankId;
+    int attempts = 0;
+    const int maxAttempts = 3;
 
-	Customer getCustomer = queueManager.getServedCustomers()[index]; 
+    // Display Header
+    cout << "┌─────────────────────────────────────────────┐" << "\n";
+    cout << "│             COMPLETE TRANSACTION            │" << "\n";
+    cout << "└─────────────────────────────────────────────┘" << "\n";
 
-	if (getCustomer.transactionType == "Account")		account(getCustomer);
-	else if (getCustomer.transactionType == "Deposit")	deposit(getCustomer);
-	else if (getCustomer.transactionType == "Withdraw")	withdraw(getCustomer);
-	else if (getCustomer.transactionType == "Transfer")	transfer(getCustomer);
-	else if (getCustomer.transactionType == "Payment")	payment(getCustomer);
+    while(attempts < maxAttempts)
+    {
+        // Prompt user to enter their Bank ID
+        userBankId = inputBankId("Enter your BankID: ");
 
-	stats.setTotalServed();
-	queueManager.isServed(getCustomer);
-	existingCustomersData.push_back(queueManager.getServedCustomers()[index]);
-	return true;
+        // Validation to enter a valid Bank ID, allowing up to 3 attempts
+        if(!isBankIdRegistered(userBankId))
+        {
+            attempts++;
+            int remainingTries = maxAttempts - attempts - 1;
+
+            cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+            cout <<   "   Bank ID does not exist. " << remainingTries << " attempt(s) left.\n";
+            cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+            
+            if (attempts == maxAttempts)
+            {
+                clearScreen();
+                cout << "\nToo many failed attempts. Returning to menu.\n";
+                return;
+            }
+
+            continue;
+        }
+
+        // Check if the user is still in the queue
+        if(queueManager.isInTheQueue(userBankId))
+        {
+            cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+            cout <<   "  🛈 You are still in the queue. Please wait." << "\n";
+            cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+            return;
+        }
+
+        // Check if the user has a completed transaction waiting
+        if(!isInTheWaitingList(userBankId))
+        {
+            cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+            cout <<   "   ⚠️     No transaction found." << "\n";
+            cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+            return;
+        }
+
+        break; // All checks passed, continue processing
+    }
+
+    Customer handleTransaction;
+
+    for (size_t i = 0; i < waitingForCompletion.size(); ++i)
+    {
+        if (waitingForCompletion[i].bank.bankId == userBankId)
+        {
+            handleTransaction = waitingForCompletion[i];
+            waitingForCompletion.erase(waitingForCompletion.begin() + i);
+            break;
+        }
+    }
+
+    string transactionType = handleTransaction.transactionType;
+
+    if (transactionType == "Account")		account(handleTransaction);
+	else if (transactionType == "Deposit")	deposit(handleTransaction);
+	else if (transactionType == "Withdraw")	withdraw(handleTransaction);
+	else if (transactionType == "Transfer")	transfer(handleTransaction);
+	else if (transactionType == "Payment")	payment(handleTransaction);
 }
 
-int CustomerInterface::findServedCustomerIndex(const std::string& name)
+bool CustomerInterface::isInTheWaitingList(const string& currentBankId)
 {
-	vector<Customer> tempServeCustomer = queueManager.getServedCustomers();
-
-	for (int i = 0; i < tempServeCustomer.size(); i++)
-	{
-		if (trim(toUpper(name)) == trim(toUpper(tempServeCustomer[i].name)))
-		{
-			return i;
-		}
-	}
-	return -1;
+    for (const Customer& c : waitingForCompletion)
+    {
+        if (c.bank.bankId == currentBankId) return true;
+    }
+    return false;
 }
 
-void CustomerInterface::account(Customer& servedCustomer)
+void CustomerInterface::account(const Customer &customer)
 {
-	string firstName = getFirstName(servedCustomer.name);
-	char choice;
+    string firstName = getFirstName(customer.name);
 
-	while (true)
-	{
-		cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-		cout << "║               " << firstName << "'s Details             ║" << "\n";
-		cout << "╠═════════════════════════════════════════════╣" << "\n";
-		cout << "║ Full Name: " << left << setw(33) << servedCustomer.name << "║" << '\n';
-		cout << "║ Age:        " << left << setw(32) << servedCustomer.age << "║" << '\n';
-		cout << "║ Balance:    " << left << setw(32) << servedCustomer.bank.balance << "║" << '\n';
-		cout << "║ Bank ID:    " << left << setw(32) << servedCustomer.bank.bankId << "║" << '\n';
-		cout << "╚═════════════════════════════════════════════╝" << "\n";
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout << "║               " << firstName << "'s Details             ║" << "\n";
+    cout << "╠═════════════════════════════════════════════╣" << "\n";
+    cout << "║ Full Name: " << left << setw(33) << customer.name << "║" << '\n';
+    cout << "║ Age:        " << left << setw(32) << customer.age << "║" << '\n';
+    cout << "║ Balance:    " << setw(32) << left << fixed << setprecision(2) << customer.bank.balance << "║" << '\n';
+    cout << "║ Bank ID:    " << left << setw(32) << customer.bank.bankId << "║" << '\n';
+    cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-		choice = getYesNoChoice("Do you want to exit the bank? [Y - Yes, N - No]: ");
+    printTransactionReceipt(customer, "Account Info");
 
-		if (choice == 'y') {
-			clearScreen();
-			return;
-		}
-		if (choice == 'n')
-		{
-			clearScreen();
-			showCustomerMenu();
-			continue;
-		}
-	}
+    if (handleExitPrompt()) return;
+    showCustomerMenu();
 }
 
-void CustomerInterface::deposit(Customer& servedCustomer)
+void CustomerInterface::deposit(const Customer &customer)
 {
-	string firstName = getFirstName(servedCustomer.name);
-	string bankId = servedCustomer.bank.bankId;
+    string firstName = getFirstName(customer.name);
+	string bankId = customer.bank.bankId;
 	double depositAmount, minDeposit = 500.0, maxDeposit = 10000000.0;
-	char choice;
 
-	while (true)
-	{
-		cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-		cout << "║        " << firstName << "'s Depositing             ║" << "\n";
-		cout << "╚═════════════════════════════════════════════╝" << "\n";
-		depositAmount = inputDouble("Deposit Amount: ", minDeposit, maxDeposit);
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout << "║        " << firstName << "'s Depositing             ║" << "\n";
+    cout << "╚═════════════════════════════════════════════╝" << "\n";
+    depositAmount = inputDouble("Deposit Amount: ", minDeposit, maxDeposit);
 
-		queueManager.depositMoney(depositAmount, bankId);
+    queueManager.depositMoney(depositAmount, bankId);
+    
+    printTransactionReceipt(customer, "Deposit", {
+        "Deposited: PHP " + formatMoney(depositAmount),
+        "New Balance: PHP " + formatMoney(depositAmount + customer.bank.balance)
+    });
 
-		choice = getYesNoChoice("Do you want to exit the bank[ Y - Yes , N - No]: ");
-
-		if (choice == 'y') {
-			clearScreen();
-			return;
-		}
-		if (choice == 'n')
-		{
-			clearScreen();
-			continue;
-		}
-	}
+    if (handleExitPrompt()) return;
+    showCustomerMenu();
 }
 
-void CustomerInterface::withdraw(Customer& servedCustomer)
+void CustomerInterface::withdraw(const Customer &customer)
 {
-	string firstName = getFirstName(servedCustomer.name);
-	string bankId = servedCustomer.bank.bankId;
-	double withdrawAmount, minWithdraw = 0, maxWithdraw = servedCustomer.bank.balance;
-	char choice;
+    string firstName = getFirstName(customer.name);
+	string bankId = customer.bank.bankId;
+	double withdrawAmount, minWithdraw = 0, maxWithdraw = customer.bank.balance;
 
-	while (true)
-	{
-		cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-		cout << "║     " << firstName << "'s Withdrawing Money       ║" << "\n";
-		cout << "╚═════════════════════════════════════════════╝" << "\n";
-		cout << " Available balance: " << maxWithdraw << endl;
-		withdrawAmount = inputDouble("Withdraw Amount: ", minWithdraw, maxWithdraw);
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout << "║     " << firstName << "'s Withdrawing Money       ║" << "\n";
+    cout << "╚═════════════════════════════════════════════╝" << "\n";
+    cout << " Available balance: " << maxWithdraw << endl;
+    withdrawAmount = inputDouble("Withdraw Amount: ", minWithdraw, maxWithdraw);
 
-		queueManager.deductFromBalance(withdrawAmount, bankId);
+    queueManager.deductFromBalance(withdrawAmount, bankId);
 
-		choice = getYesNoChoice("Do you want to exit [ Y - Yes ]: ");
+    printTransactionReceipt(customer, "Deposit", {
+        "Withdrawn: PHP " + formatMoney(withdrawAmount),
+        "Remaining Balance: PHP " + formatMoney(customer.bank.balance - withdrawAmount)
+    });
 
-		if (choice == 'y') {
-			clearScreen();
-			return;
-		}
-		if (choice == 'n')
-		{
-			clearScreen();
-			continue;
-		}
-	}
-
+    if (handleExitPrompt()) return;
+    showCustomerMenu();
 }
 
-void CustomerInterface::transfer(Customer& servedCustomer)
+void CustomerInterface::transfer(const Customer &customer)
 {
-	string firstName = getFirstName(servedCustomer.name);
-	string bankId = servedCustomer.bank.bankId;
+    string firstName = getFirstName(customer.name);
+	string bankId = customer.bank.bankId;
 	string recipientId;
-	double transferAmount, minTransfer = 0, maxTransfer = servedCustomer.bank.balance;
+	double transferAmount, minTransfer = 0, maxTransfer = customer.bank.balance;
 	char choice;
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
@@ -260,73 +358,64 @@ void CustomerInterface::transfer(Customer& servedCustomer)
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 	cout << " Available balance: " << maxTransfer << endl;
 
-	// Checking for recipient's id if exist
-	while (true)
-	{
-		cout << "Enter recipient's Bank ID: ";
-		cin >> recipientId;
+    // Ask for recipient's Bank ID, max 3 attempts
+    int attempts = 0;
+    const int maxAttempts = 3;
+    while(attempts < maxAttempts)
+    {
+        recipientId = inputBankId("Enter recipient's Bank ID: ");
+        
+        // Prevent transferring to own account
+        if(recipientId == bankId)
+        {
+            cout << "You cannot transfer into your own account. Please try again!\n";
+            continue;
+        }
 
-		recipientId = trim(recipientId);
-		if (recipientId.length() != 7)
-		{
-			cout << "ID must be 000-000. Please try again.\n";
-			continue;
-		}
+        // Check if recipient's Bank ID exists
+        if(!isBankIdRegistered(recipientId))
+        {
+            attempts++;
+            int remainingTries = maxAttempts - attempts;
 
-		bool isValid = false;
+            cout << "Recipient's Bank ID doesn't exist. " << remainingTries << " attempt(s) left.\n";
 
-		// Check in served customers
-		vector<Customer> served = queueManager.getServedCustomers();
-		for (const Customer& c : served)
-		{
-			if (c.bank.bankId == recipientId && recipientId != bankId)
-			{
-				isValid = true;
-				break;
-			}
-		}
+            if (attempts == maxAttempts)
+            {
+                waitingForCompletion.push_back(customer);
+                clearScreen();
+                cout << "\nToo many failed attempts. Returning to menu.\n";
+                return;
+            }
 
-		// Check in pending customers
-		queue<Customer> pending = queueManager.getPendingCustomers();
-		while (!pending.empty())
-		{
-			Customer temp = pending.front();
-			pending.pop();
+            continue;
+        }
 
-			if (temp.bank.bankId == recipientId && recipientId != bankId)
-			{
-				isValid = true;
-				break;
-			}
-		}
+        break; // Valid recipient ID
+    }
 
-		if (isValid)
-		{
-			break;
-		}
+    transferAmount = inputDouble("Transfer Amount: ", minTransfer, maxTransfer);
 
-		cout << "Bank ID doesn't exist. Please try again.\n";
-	}
+    // Perform money transfer via QueueManager
+    queueManager.transferMoney(transferAmount, bankId, recipientId);
 
-	transferAmount = inputDouble("Transfer Amount: ", minTransfer, maxTransfer);
+    // Print transaction receipt to file
+    printTransactionReceipt(customer, "Transfer", {
+        "Transferred: PHP " + formatMoney(transferAmount),
+        "Recipient Bank ID: " + recipientId,
+        "Remaining Balance: PHP " + formatMoney(customer.bank.balance - transferAmount)
+    });
 
-	queueManager.transferMoney(transferAmount, bankId, recipientId);
-
-	choice = getYesNoChoice("Do you want to exit [ Y - Yes ]: ");
-
-	if (choice == 'y') {
-		clearScreen();
-		return;
-	}
+    if (handleExitPrompt()) return;
+    showCustomerMenu();
 }
 
-void CustomerInterface::payment(Customer& servedCustomer)
+void CustomerInterface::payment(const Customer &customer)
 {
-	string firstName = getFirstName(servedCustomer.name);
-	string bankId = servedCustomer.bank.bankId;
+    string firstName = getFirstName(customer.name);
+	string bankId = customer.bank.bankId;
 	string paymentPurpose = "";
-	double paymentAmount, minPayment = 0, maxPayment = servedCustomer.bank.balance;
-	char choice;
+	double paymentAmount, minPayment = 0, maxPayment = customer.bank.balance;
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout << "║        " << firstName << "'s Payment                ║" << "\n";
@@ -337,20 +426,40 @@ void CustomerInterface::payment(Customer& servedCustomer)
 
 	queueManager.deductFromBalance(paymentAmount, bankId);
 
-	choice = getYesNoChoice("Do you want to exit [ Y - Yes ]: ");
+    printTransactionReceipt(customer, "Deposit", {
+        "Payment: PHP " + formatMoney(paymentAmount),
+        "To: " + paymentPurpose,
+        "Remaining Balance: PHP " + formatMoney(customer.bank.balance - paymentAmount)
+    });
 
-	if (choice == 'y') {
-		clearScreen();
-		return;
-	}
-	if (choice == 'n')
-	{
-		clearScreen();
-
-	}
+	if (handleExitPrompt()) return;
+    showCustomerMenu();
 }
 
-string CustomerInterface::getFirstName(const std::string& name)
+bool CustomerInterface::isBankIdRegistered(const string& bankId)
+{
+    string line, storedBankId;
+
+    // Open file and check if Bank ID exists
+    ifstream checkRegistered("RegisteredCustomers.txt");
+    while(getline(checkRegistered, line))
+    {
+        stringstream ss(line); 
+        string tempName, ageStr, balanceStr;
+
+        getline(ss, storedBankId, '|');
+
+        if(storedBankId == bankId) 
+        {
+            return true;
+        }
+    } 
+    checkRegistered.close();
+
+    return false;
+}
+
+string CustomerInterface::getFirstName(const string& name)
 {
 	string firstName = "";
 
@@ -365,3 +474,54 @@ string CustomerInterface::getFirstName(const std::string& name)
 	return firstName;
 }
 
+void CustomerInterface::printTransactionReceipt(
+    const Customer& customer, 
+    const string& transactionType, 
+    const vector<string>& additionalInfo = {})
+{
+    // Create folder if it doesn't exist
+    #ifdef _WIN32
+        _mkdir("receipts");
+    #else
+        mkdir("receipts", 0777);
+    #endif
+
+    // Generate unique filename
+    time_t now = time(0);
+    tm* localTime = localtime(&now);
+
+    char filename[100];
+    strftime(filename, sizeof(filename), "receipts/receipt_%Y%m%d_%H%M%S.txt", localTime);
+
+    ofstream file(filename);
+
+    // Create box title: FirstName - TransactionType
+    string firstName = getFirstName(customer.name);
+    string title = firstName + " - " + transactionType;
+
+    file << title << '\n';
+    file << "Full Name" << customer.name << '\n';
+    file << "Age " << customer.age << '\n';
+    file << "Balance " << customer.bank.balance << '\n';
+    file << "Bank ID: " << customer.bank.bankId << '\n';
+
+    for (const string& line : additionalInfo)
+    {
+        file << "║" << line << "║\n";
+    }
+    file.close();
+
+    cout << "\nReceipt saved to file: " << filename << "\n";
+}
+
+bool CustomerInterface::handleExitPrompt()
+{
+    char choice = getYesNoChoice("Do you want to exit [y or n]:");
+    if (choice == 'y') 
+    {
+		clearScreen();
+		return true;
+	}
+    clearScreen();
+    return false;
+}

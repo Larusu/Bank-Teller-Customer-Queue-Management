@@ -4,7 +4,7 @@ using namespace Utils;
 using namespace std;
 
 // ---------- Utility / Internal Helpers ----------
-bool QueueManager::isVip(const std::string& name)
+bool QueueManager::isVip(const string& name)
 {
 	ifstream vipFile;
 	string line;
@@ -20,104 +20,54 @@ bool QueueManager::isVip(const std::string& name)
 	return false;
 }
 
-string QueueManager::nameFormatter(const string& name)
-{
-	string newName;
-	bool firstLetter = true;
-
-	for (char n : trim(name))
-	{
-		if (firstLetter)
-		{
-			newName += toupper(n);
-			firstLetter = false;
-			continue;
-		}
-
-		if (isspace(n))
-		{
-			newName += " ";
-			firstLetter = true;
-			continue;
-		}
-
-		newName += tolower(n);
-	}
-
-	return newName;
-}
-
-string QueueManager::generateBankId()
-{
-	string code = generateCode(3) + "-" + generateCode(3);
-	if (regularQueue.empty())
-	{
-		return code;
-	}
-	queue<Customer> temp = regularQueue;
-	
-	while (!temp.empty())
-	{
-		Customer c = temp.front();
-		temp.pop();
-		
-		if (c.bank.bankId == code)
-		{
-			code = generateCode(3) + "-" + generateCode(3);
-		}
-	}
-
-	return code;
-}
-
-string QueueManager::generateCode(int length)
-{
-	string RandomCode = "";
-
-	while (RandomCode.length() < length)
-	{
-		char random = (rand() % 10) + '0';
-		RandomCode += random;
-	}
-	return RandomCode;
-}
-
 // ---------- Customer Creation & Lookup ----------
-bool QueueManager::isExistingName(const std::string& name)
+bool QueueManager::isInTheQueue(const string& bankId)
 {
-	// check served customers
-	for (int i = 0; i < servedCustomers.size(); i++)
+	queue<Customer>current = regularQueue;
+
+	while(!current.empty())
 	{
-		if (toUpper(servedCustomers[i].name) == trim(toUpper(name)))
+		Customer customer = current.front();
+		current.pop();
+
+		if(customer.bank.bankId == bankId)
 		{
 			return true;
 		}
 	}
 
-	// if none in served customer
-	queue<Customer>tempQueue = regularQueue;
-	while (!tempQueue.empty())
-	{
-		Customer c = tempQueue.front();
-		tempQueue.pop();
-
-		if (toUpper(c.name) == trim(toUpper(name)))
-		{
-			return true;
-		}
-	}
 	return false;
 }
 
 Customer QueueManager::createCustomer(const string& name, int age, const string& transactionType, double balance)
 {
-
 	Customer c;
 	
 	customerCounter++;
 	c.name = nameFormatter(name);
 	c.id = customerCounter;
 	c.bank.bankId = generateBankId();
+	c.age = age;
+	c.bank.balance = balance;
+	c.transactionType = transactionType;
+	c.estimatedServiceTime = estimateServiceTime(transactionType);
+	c.arrivalOrder = regularQueue.size();
+
+	if (isVip(name)) { c.priorityLevel = 2; }
+	else if (c.age >= 60) { c.priorityLevel = 1; }
+	else { c.priorityLevel = 0; }
+
+	return c;
+}
+
+Customer QueueManager::createCustomer(const string& name, int age, const string& transactionType, double balance, const string& bankID)
+{
+	Customer c;
+	
+	customerCounter++;
+	c.name = nameFormatter(name);
+	c.id = customerCounter;
+	c.bank.bankId = bankID;
 	c.age = age;
 	c.bank.balance = balance;
 	c.transactionType = transactionType;
@@ -214,19 +164,16 @@ int QueueManager::getPeakQueueLength(int currentQueueLength)
 	return peakQueueLength;
 }
 
-Customer QueueManager::getFront()
-{
-	return regularQueue.front();
-}
-
 // ---------- Transactions ----------
-void QueueManager::depositMoney(double deposit, const string& bankId)
+void QueueManager::depositMoney(double amount, const string& bankId)
 {
 	for (Customer& c : servedCustomers)
 	{
 		if (c.bank.bankId == bankId)
 		{
-			c.bank.balance += deposit;
+			c.bank.balance += amount;
+
+			updateCustomersBalance(amount, bankId, add);
 			return;
 		}
 	}
@@ -254,6 +201,9 @@ void QueueManager::transferMoney(double amount, const std::string& senderId, con
 		{
 			servedCustomers[senderIndex].bank.balance -= amount;
 			servedCustomers[i].bank.balance += amount;
+
+			updateCustomersBalance(amount, senderId, subtract, recipientId); // deduct from sender, add to recipient
+			updateCustomersBalance(amount, recipientId, add);				 // add to recipient
 			return;
 		}
 	}
@@ -269,6 +219,9 @@ void QueueManager::transferMoney(double amount, const std::string& senderId, con
 		{
 			servedCustomers[senderIndex].bank.balance -= amount;
 			c.bank.balance += amount;
+
+			updateCustomersBalance(amount, senderId, subtract, recipientId);
+			updateCustomersBalance(amount, recipientId, add);
 		}
 
 		tempQueue.push(c);
@@ -284,39 +237,86 @@ void QueueManager::deductFromBalance(double amount, const string& bankId)
 		if (c.bank.bankId == bankId)
 		{
 			c.bank.balance -= amount;
+			updateCustomersBalance(amount, bankId, subtract);
 			return;
 		}
 	}
 }
 
-// ---------- Statistics & Accessors ----------
-int QueueManager::getLastServiceTime()
+void QueueManager::updateCustomersBalance(double balance, const string& bankId, double (*op)(double, double), const string& recipientId = "")
 {
-	if (!regularQueue.empty())
-		return regularQueue.front().estimatedServiceTime;
-	return 0;
-}
+	ifstream readFile("RegisteredCustomers.txt");
+	vector<string> storingPerLine;
+	string line;
 
-const vector<Customer>& QueueManager::getServedCustomers()
-{
-	return servedCustomers;
-}
-
-const queue<Customer>& QueueManager::getPendingCustomers()
-{
-	return regularQueue;
-}
-
-void QueueManager::isServed(const Customer& customer)
-{
-	// Check if the customer is in the served list
-	for(int i = 0; i < servedCustomers.size(); i++)
+	// Read all lines
+	while(getline(readFile, line))
 	{
-		if (servedCustomers[i].id == customer.id)
+		stringstream ss(line);
+		string storedBankId;
+		
+		getline(ss, storedBankId, '|');
+		
+		// Modify the target line per current customer
+		if(storedBankId == bankId)
 		{
-			// If found, remove them from the served list
-			servedCustomers.erase(servedCustomers.begin() + i);
-			return;
+			string storedName, strAge, strBalance;
+			double storedBalance;
+
+			getline(ss, storedName, '|');
+			getline(ss, strAge, '|');
+			getline(ss, strBalance, '|');
+			storedBalance = stod(strBalance);
+
+			double newBalance = useOperator(storedBalance, balance, op);
+
+			string updatedLine = storedBankId + "|" + storedName + "|" + strAge + "|" + to_string(newBalance);
+			storingPerLine.push_back(updatedLine);
+		}
+		// Modify the target line if there is a recipient
+		else if(recipientId != "" && recipientId == storedBankId)
+		{
+			string storedName, strAge, strBalance;
+			double storedBalance;
+
+			getline(ss, storedName, '|');
+			getline(ss, strAge, '|');
+			getline(ss, strBalance, '|');
+			storedBalance = stod(strBalance);
+
+			double newBalance = useOperator(storedBalance, balance, op);
+
+			string updatedLine = storedBankId + "|" + storedName + "|" + strAge + "|" + to_string(newBalance);
+			storingPerLine.push_back(updatedLine);
+		}
+		// Keep original line
+		else
+		{
+			storingPerLine.push_back(line);
 		}
 	}
+	readFile.close();
+
+	// Write back to the file
+	ofstream fileWrite("RegisteredCustomers.txt");
+	for(const string& updatedLine : storingPerLine)
+	{
+		fileWrite << updatedLine << endl;
+	}
+	fileWrite.close();
+}
+
+double QueueManager::add(double x, double y)
+{
+	return x + y;
+}
+
+double QueueManager::subtract(double x, double y)
+{
+	return x - y;
+}
+
+double QueueManager::useOperator(double a, double b, double (*func)(double, double)) 
+{
+    return func(a, b);
 }

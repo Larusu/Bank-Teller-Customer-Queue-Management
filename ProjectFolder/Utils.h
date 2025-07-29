@@ -1,10 +1,14 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include <cstdlib>
 #include <algorithm>
 #include <cctype>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>  
+#include <ctime>    
+#include <set>
 
 // Utility functions for input, estimation, and formatting.
 namespace Utils
@@ -18,4 +22,8 @@ namespace Utils
     std::string trim(const std::string& str);                       // Trim both leading and trailing whitespace
     char getYesNoChoice(const std::string& prompt);
     double inputDouble(const std::string& prompt, double min, double max);
+    std::string inputBankId(const std::string& prompt);
+    std::string generateBankId();
+    std::string nameFormatter(const std::string& name); // Formats name into a standard format.
+    std::string formatMoney(double amount);
 }

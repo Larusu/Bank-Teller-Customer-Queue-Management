@@ -24,4 +24,6 @@ private:
     void serveCustomer();        // Serves the next customer in the queue.
     void displayQueue();         // Displays current queue of customers.
     void showStatistics();       // Displays statistics like served customers, transaction counts, etc.
+
+    bool isCustomerInQueueByName(const std::string& fullName);
 };

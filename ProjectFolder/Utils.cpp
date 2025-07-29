@@ -140,6 +140,41 @@ double Utils::inputDouble(const string& prompt, double min, double max)
 	}
 }
 
+string Utils::inputBankId(const string& prompt)
+{
+	string input;
+
+	while(true)
+	{
+		cout << prompt;
+
+		if (!getline(cin, input))
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please try again.\n> ";
+        }
+
+		input = Utils::trim(input);
+
+		// Validation format
+        if(input.length() != 7 || input[3] != '-' ||
+		   !isdigit(input[0]) || !isdigit(input[1]) || !isdigit(input[2]) ||
+		   !isdigit(input[4]) || !isdigit(input[5]) || !isdigit(input[6]))
+        {
+            cout << "Bank ID must be in format 000-000 using digits only. Please try again!\n>";
+            continue;
+        }
+
+		if(!input.empty())
+		{
+			return input;
+		}
+
+		cout << "Input cannot be empty. Please try again.\n> ";
+	}
+}
+
 
 string Utils::trim(const std::string& str) 
 {
@@ -162,6 +197,75 @@ char Utils::getYesNoChoice(const string& prompt)
 			cout << "Must be Y or N only! Please try again.\n> ";
 			continue;
 		}
-		return input;
+		return tolower(input);
 	}
+}
+
+string Utils::generateBankId()
+{
+	ifstream registered("RegisteredCustomers.txt");
+	string line = "", bankId = "";
+	set<string> existingIds;
+
+	while(getline(registered, line))
+	{
+		stringstream ss(line); 
+
+		getline(ss, bankId, '|');
+	}
+	registered.close();
+
+	srand(time(0)); 
+
+	string newCode;
+
+	do {
+        newCode = "";
+        while (newCode.length() < 7)
+        {
+            if (newCode.length() == 4)
+            {
+                newCode += '-';
+                continue;
+            }
+            char random = (rand() % 10) + '0';  
+            newCode += random;
+        }
+    } while (existingIds.find(newCode) != existingIds.end());
+
+	return newCode;
+}
+
+string Utils::nameFormatter(const string& name)
+{
+	string newName;
+	bool firstLetter = true;
+
+	for (char n : Utils::trim(name))
+	{
+		if (firstLetter)
+		{
+			newName += toupper(n);
+			firstLetter = false;
+			continue;
+		}
+
+		if (isspace(n))
+		{
+			newName += " ";
+			firstLetter = true;
+			continue;
+		}
+
+		newName += tolower(n);
+	}
+
+	return newName;
+}
+
+string Utils::formatMoney(double amount) 
+{
+    stringstream ss;
+    ss << fixed << setprecision(2) << amount;
+    return ss.str();
 }

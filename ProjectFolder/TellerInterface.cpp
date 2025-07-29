@@ -53,9 +53,9 @@ void TellerInterface::addCustomer()
 
 	name = inputString("Enter Full Name: ");
 
-	if(queueManager.isExistingName(name))
+	if(isCustomerInQueueByName(nameFormatter(name)))
 	{
-		cout << "Customer already has a pending transaction." << endl;
+		cout << "Customer is currently in the queue.\n";
 		return;
 	}
 
@@ -99,6 +99,28 @@ void TellerInterface::addCustomer()
 	cout << "  🛈 Customer ID " << c.id << " has been added to the queue" << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 }
+
+bool TellerInterface::isCustomerInQueueByName(const string& fullName)
+{
+	ifstream file("RegisteredCustomers.txt");
+	string line;
+	while (getline(file, line))
+	{
+		stringstream ss(line);
+		string bankId, name;
+		getline(ss, bankId, '|');
+		getline(ss, name, '|');
+
+		if (name == fullName)
+		{
+			file.close();
+			return queueManager.isInTheQueue(bankId);
+		}
+	}
+	file.close();
+	return false;
+}
+
 
 void TellerInterface::serveCustomer()
 {
