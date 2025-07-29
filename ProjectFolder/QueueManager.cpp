@@ -134,44 +134,39 @@ Customer QueueManager::createCustomer(const string& name, int age, const string&
 // ---------- Queue Management ----------
 void QueueManager::addCustomer(const Customer& newCustomer)
 {
-	// If customer has a priority level (1 = Senior Citizen, 2 = VIP)
-	if (newCustomer.priorityLevel > 0)
-	{
-		queue<Customer> temp;
-		
-		while (!regularQueue.empty())
-		{
-			Customer c = regularQueue.front();
+	queue<Customer> newQueue;
+	bool inserted = false;
 
-			/* Priority Rules:
-                - VIP (2) has the highest priority: placed in front of everyone.
-                - Senior Citizen (1) is placed after all VIPs, but before regular customers and other seniors.
-                - Regular customers (0) are always placed at the back. */
-			if (c.priorityLevel > newCustomer.priorityLevel) break;
-			
-			temp.push(c);
-			regularQueue.pop();
-		}
-		
-		regularQueue.push(newCustomer);
-
-		while (!temp.empty())
-		{
-			regularQueue.push(temp.front());
-			temp.pop();
-		}
-	}
-	else
+	while (!regularQueue.empty())
 	{
-	// Regular customers are added to the end of the queue
-		regularQueue.push(newCustomer);
+		Customer current = regularQueue.front();
+		regularQueue.pop();
+
+		// Insert before the first customer with lower priority
+		if (!inserted && newCustomer.priorityLevel > current.priorityLevel)
+		{
+			newQueue.push(newCustomer);
+			inserted = true;
+		}
+
+		newQueue.push(current);
 	}
-	
-	// Set peak queue length
+
+	// If not inserted (i.e., queue is empty or newCustomer has lowest priority), add at the end
+	if (!inserted)
+	{
+		newQueue.push(newCustomer);
+	}
+
+	// Replace the original queue
+	regularQueue = newQueue;
+
+	// Track peak queue length
 	if (regularQueue.size() > peakQueueLength) {
 		peakQueueLength = regularQueue.size();
 	}
 }
+
 
 Customer QueueManager::serveCustomer()
 {
