@@ -35,16 +35,17 @@ void CustomerInterface::showCustomerMenu()
         case 1: registerCustomer(); break;
         case 2: choosingTransaction(); break;
         case 3: completeTransaction(); break;
-        case 4: return;
+        case 4: cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+                cout <<   "            Thank you for visiting.            " << "\n";
+                cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+                return;
     }
-
-    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout <<   "            Thank you for visiting.            " << "\n";
-    cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 }
 
 void CustomerInterface::registerCustomer()
 {
+    clearScreen();
+
     // Declare customer details 
     double balance = 0.0, minBal = 500.0, maxBal = 10000000.0;
 	string firstName = "", lastName = "", fullName = "", transaction = "";
@@ -71,7 +72,7 @@ void CustomerInterface::registerCustomer()
     bankId = generateBankId(); 
 
     // create receipt using full name
-    string nameToTxt;
+    string nameToTxt = "ID_";
     for(char c : fullName)
     {
         nameToTxt += (isspace(c)) ? '_' : c;
@@ -80,7 +81,7 @@ void CustomerInterface::registerCustomer()
 
     // Write bank ID to receipt file
     ofstream getBankId(nameToTxt);
-    getBankId << bankId;
+    getBankId << "Bank ID: " << bankId;
     getBankId.close();
 
     // Save customer info to RegisteredCustomers file 
@@ -91,10 +92,15 @@ void CustomerInterface::registerCustomer()
                << age << "|"
                << balance << '\n';
     registered.close();
+
+    clearScreen();
+    cout << "Please check your Bank ID through " << nameToTxt << " then go to transaction to complete the queue" << endl;
 }
 
 void CustomerInterface::choosingTransaction()
 {
+    clearScreen();
+
     // Declare customer details and Bank ID
     string name, transaction, userBankId;
     int age;
@@ -196,6 +202,8 @@ void CustomerInterface::choosingTransaction()
 
 void CustomerInterface::completeTransaction()
 {
+    clearScreen();
+
     string userBankId;
     int attempts = 0;
     const int maxAttempts = 3;
@@ -270,6 +278,11 @@ void CustomerInterface::completeTransaction()
 	else if (transactionType == "Withdraw")	withdraw(handleTransaction);
 	else if (transactionType == "Transfer")	transfer(handleTransaction);
 	else if (transactionType == "Payment")	payment(handleTransaction);
+
+    clearScreen();
+    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+    cout <<   "            Thank you for visiting.            " << "\n";
+    cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 }
 
 bool CustomerInterface::isInTheWaitingList(const string& currentBankId)
@@ -283,6 +296,8 @@ bool CustomerInterface::isInTheWaitingList(const string& currentBankId)
 
 void CustomerInterface::account(const Customer &customer)
 {
+    clearScreen();
+
     string firstName = getFirstName(customer.name);
 
     cout << "\n╔═════════════════════════════════════════════╗" << "\n";
@@ -302,6 +317,8 @@ void CustomerInterface::account(const Customer &customer)
 
 void CustomerInterface::deposit(const Customer &customer)
 {
+    clearScreen();
+
     string firstName = getFirstName(customer.name);
 	string bankId = customer.bank.bankId;
 	double depositAmount, minDeposit = 500.0, maxDeposit = 10000000.0;
@@ -324,6 +341,8 @@ void CustomerInterface::deposit(const Customer &customer)
 
 void CustomerInterface::withdraw(const Customer &customer)
 {
+    clearScreen();
+
     string firstName = getFirstName(customer.name);
 	string bankId = customer.bank.bankId;
 	double withdrawAmount, minWithdraw = 0, maxWithdraw = customer.bank.balance;
@@ -347,6 +366,8 @@ void CustomerInterface::withdraw(const Customer &customer)
 
 void CustomerInterface::transfer(const Customer &customer)
 {
+    clearScreen();
+
     string firstName = getFirstName(customer.name);
 	string bankId = customer.bank.bankId;
 	string recipientId;
@@ -412,6 +433,8 @@ void CustomerInterface::transfer(const Customer &customer)
 
 void CustomerInterface::payment(const Customer &customer)
 {
+    clearScreen();
+
     string firstName = getFirstName(customer.name);
 	string bankId = customer.bank.bankId;
 	string paymentPurpose = "";
@@ -524,4 +547,9 @@ bool CustomerInterface::handleExitPrompt()
 	}
     clearScreen();
     return false;
+}
+
+void CustomerInterface::setWaitingForCompletion(const Customer& customer)
+{
+    waitingForCompletion.push_back(customer);
 }

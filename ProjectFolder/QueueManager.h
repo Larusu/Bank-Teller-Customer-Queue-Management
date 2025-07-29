@@ -20,7 +20,7 @@ private: // Private attributes
 private: // Private Methods
     // ---------- Utility / Internal Helpers ----------
     bool isVip(const std::string& name);            // Determines if a customer is a VIP based on name.
-    void updateCustomersBalance(double balance, const std::string& bankId, double (*op)(double, double), const std::string& recipientId = "");
+    void updateCustomersBalance(double balance, const std::string& bankId, double (*op)(double, double));
     static double useOperator(double a, double b, double (*func)(double, double)) ;
     static double add(double x, double y);
     static double subtract(double x, double y);

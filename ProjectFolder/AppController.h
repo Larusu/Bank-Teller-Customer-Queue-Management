@@ -12,7 +12,7 @@ class AppController
 {
 public:
     AppController()
-        : customerUI(queueManager, stats), tellerUI(queueManager, stats, announcement)
+        : customerUI(queueManager, stats), tellerUI(queueManager, stats, announcement, customerUI)
     { }
 
     void run();  // Starts the application loop. Called from main().

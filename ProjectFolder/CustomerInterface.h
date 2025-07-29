@@ -26,6 +26,7 @@ public:
 		: queueManager( queueManager ), stats( stats )
 	{ }
     void showCustomerMenu();
+    void setWaitingForCompletion(const Customer& customer);
 private:
 	QueueManager& queueManager;
 	Statistics& stats;
@@ -35,6 +36,7 @@ private:
     void choosingTransaction();             // Handles input transaction and inserting in queue
     void completeTransaction();             // Handles completion of transaction
 
+    // paki ayos ng interface dito
     void account(const Customer& customer);   // Shows customer's account info.
 	void deposit(const Customer& customer);   // Handles deposit transactions.
 	void withdraw(const Customer& customer);  // Handles withdrawal transactions.
@@ -46,7 +48,7 @@ private:
     std::string getFirstName(const std::string& name);
     void printTransactionReceipt(const Customer& customer, 
             const std::string& transactionType, 
-            const std::vector<std::string>& additionalInfo = {});
+            const std::vector<std::string>& additionalInfo = {}); // ito rin pakiayos interface
     bool isBankIdRegistered(const std::string& bankId);
     bool handleExitPrompt();
 };

@@ -167,13 +167,15 @@ int QueueManager::getPeakQueueLength(int currentQueueLength)
 // ---------- Transactions ----------
 void QueueManager::depositMoney(double amount, const string& bankId)
 {
-	for (Customer& c : servedCustomers)
-	{
-		if (c.bank.bankId == bankId)
-		{
-			c.bank.balance += amount;
+	// Change file balance
+	updateCustomersBalance(amount, bankId, add);
 
-			updateCustomersBalance(amount, bankId, add);
+	// Remove element on servedCustomer
+	for (auto it = servedCustomers.begin(); it != servedCustomers.end(); ++it)
+	{
+		if (it->bank.bankId == bankId)
+		{
+			servedCustomers.erase(it);
 			return;
 		}
 	}
@@ -181,6 +183,10 @@ void QueueManager::depositMoney(double amount, const string& bankId)
 
 void QueueManager::transferMoney(double amount, const std::string& senderId, const std::string& recipientId)
 {
+	// Change file balance
+	updateCustomersBalance(amount, senderId, subtract);
+	updateCustomersBalance(amount, recipientId, add);
+
 	int senderIndex = -1;
 
 	for (int i = 0; i < servedCustomers.size(); i++)
@@ -192,23 +198,7 @@ void QueueManager::transferMoney(double amount, const std::string& senderId, con
 		}
 	}
 
-	if (senderIndex == -1) { cout << "Invalid sender id! "; return; }
-
-	// Transfer if recipient is in servedCustomers
-	for (int i = 0; i < servedCustomers.size(); i++)
-	{
-		if (servedCustomers[i].bank.bankId == recipientId && senderIndex != -1)
-		{
-			servedCustomers[senderIndex].bank.balance -= amount;
-			servedCustomers[i].bank.balance += amount;
-
-			updateCustomersBalance(amount, senderId, subtract, recipientId); // deduct from sender, add to recipient
-			updateCustomersBalance(amount, recipientId, add);				 // add to recipient
-			return;
-		}
-	}
-
-	// If not found in servedCustomers, search in regularQueue and rebuild it
+	// If recipient is in the queue, change their balance
 	queue<Customer> tempQueue;
 	while (!regularQueue.empty())
 	{
@@ -217,33 +207,36 @@ void QueueManager::transferMoney(double amount, const std::string& senderId, con
 
 		if (c.bank.bankId == recipientId && senderIndex != -1)
 		{
-			servedCustomers[senderIndex].bank.balance -= amount;
 			c.bank.balance += amount;
-
-			updateCustomersBalance(amount, senderId, subtract, recipientId);
-			updateCustomersBalance(amount, recipientId, add);
+			cout << "New balance for recipient " << c.bank.balance + amount;
 		}
-
+		
 		tempQueue.push(c);
 	}
 
 	regularQueue = tempQueue;
+
+	// Remove element on servedCustomer
+	servedCustomers.erase(servedCustomers.begin() + senderIndex);
 }
 
 void QueueManager::deductFromBalance(double amount, const string& bankId)
 {
-	for (Customer& c : servedCustomers)
+	updateCustomersBalance(amount, bankId, subtract);
+
+	for(size_t i = 0; i < servedCustomers.size(); i++)
 	{
-		if (c.bank.bankId == bankId)
+		Customer c = servedCustomers[i];
+		
+		if(c.bank.bankId == bankId)
 		{
-			c.bank.balance -= amount;
-			updateCustomersBalance(amount, bankId, subtract);
+			servedCustomers.erase(servedCustomers.begin() + i);
 			return;
 		}
 	}
 }
 
-void QueueManager::updateCustomersBalance(double balance, const string& bankId, double (*op)(double, double), const string& recipientId)
+void QueueManager::updateCustomersBalance(double balance, const string& bankId, double (*op)(double, double))
 {
 	ifstream readFile("RegisteredCustomers.txt");
 	vector<string> storingPerLine;
@@ -266,28 +259,14 @@ void QueueManager::updateCustomersBalance(double balance, const string& bankId, 
 			getline(ss, storedName, '|');
 			getline(ss, strAge, '|');
 			getline(ss, strBalance, '|');
+			
 			storedBalance = stod(strBalance);
 
 			double newBalance = useOperator(storedBalance, balance, op);
 
-			string updatedLine = storedBankId + "|" + storedName + "|" + strAge + "|" + to_string(newBalance);
-			storingPerLine.push_back(updatedLine);
-		}
-		// Modify the target line if there is a recipient
-		else if(recipientId != "" && recipientId == storedBankId)
-		{
-			string storedName, strAge, strBalance;
-			double storedBalance;
-
-			getline(ss, storedName, '|');
-			getline(ss, strAge, '|');
-			getline(ss, strBalance, '|');
-			storedBalance = stod(strBalance);
-
-			double newBalance = useOperator(storedBalance, balance, op);
-
-			string updatedLine = storedBankId + "|" + storedName + "|" + strAge + "|" + to_string(newBalance);
-			storingPerLine.push_back(updatedLine);
+			stringstream updatedLine;
+			updatedLine << storedBankId << "|" << storedName << "|" << strAge << "|" << fixed << setprecision(2) << newBalance;
+			storingPerLine.push_back(updatedLine.str());
 		}
 		// Keep original line
 		else
@@ -299,6 +278,7 @@ void QueueManager::updateCustomersBalance(double balance, const string& bankId, 
 
 	// Write back to the file
 	ofstream fileWrite("RegisteredCustomers.txt");
+
 	for(const string& updatedLine : storingPerLine)
 	{
 		fileWrite << updatedLine << endl;

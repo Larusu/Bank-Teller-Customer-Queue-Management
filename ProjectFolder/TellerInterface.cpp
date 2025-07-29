@@ -134,7 +134,7 @@ void TellerInterface::serveCustomer()
 	}
 
 	customer = queueManager.serveCustomer();
-
+	customerUI.setWaitingForCompletion(customer);
 	clearScreen();
 
 	g_announcement = "╔═════════════════════════════════════════════╗\n   🛈       Now serving Customer ID " + to_string(customer.id) + "\n╚═════════════════════════════════════════════╝\n";

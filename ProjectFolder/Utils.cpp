@@ -156,7 +156,6 @@ string Utils::inputBankId(const string& prompt)
         }
 
 		input = Utils::trim(input);
-
 		// Validation format
         if(input.length() != 7 || input[3] != '-' ||
 		   !isdigit(input[0]) || !isdigit(input[1]) || !isdigit(input[2]) ||
@@ -223,7 +222,7 @@ string Utils::generateBankId()
         newCode = "";
         while (newCode.length() < 7)
         {
-            if (newCode.length() == 4)
+            if (newCode.length() == 3)
             {
                 newCode += '-';
                 continue;

@@ -3,6 +3,7 @@
 #include "Customer.h"
 #include "Statistics.h"
 #include "Utils.h"
+#include "CustomerInterface.h"
 
 #include <iostream>
 #include <string>
@@ -10,13 +11,14 @@
 class TellerInterface
 {
 public:
-    TellerInterface(QueueManager& queueManager, Statistics& stats, std::string& announce)
-        : queueManager(queueManager), stats(stats), g_announcement(announce)
+    TellerInterface(QueueManager& queueManager, Statistics& stats, std::string& announce, CustomerInterface& customerUI)
+        : queueManager(queueManager), stats(stats), g_announcement(announce), customerUI(customerUI)
     { }
     void showTellerMenu();         // Displays the teller main menu.
 private:
     QueueManager& queueManager;
     Statistics& stats;
+    CustomerInterface& customerUI;
     std::string& g_announcement;
 private:
     // ---------- Teller ----------
