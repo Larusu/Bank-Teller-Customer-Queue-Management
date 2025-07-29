@@ -137,7 +137,9 @@ void TellerInterface::serveCustomer()
 	customerUI.setWaitingForCompletion(customer);
 	clearScreen();
 
-	g_announcement = "╔═════════════════════════════════════════════╗\n   🛈       Now serving Customer ID " + to_string(customer.id) + "\n╚═════════════════════════════════════════════╝\n";
+	// Notify the customer that their id has been served
+	g_announcements[customer.bank.bankId] = customer.id;
+
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout << "   🛈       Now serving Customer ID " << customer.id << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";

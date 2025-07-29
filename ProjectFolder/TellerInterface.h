@@ -7,19 +7,20 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 class TellerInterface
 {
 public:
-    TellerInterface(QueueManager& queueManager, Statistics& stats, std::string& announce, CustomerInterface& customerUI)
-        : queueManager(queueManager), stats(stats), g_announcement(announce), customerUI(customerUI)
+    TellerInterface(QueueManager& queueManager, Statistics& stats, std::map<std::string, int>& announce, CustomerInterface& customerUI)
+        : queueManager(queueManager), stats(stats), g_announcements(announce), customerUI(customerUI)
     { }
     void showTellerMenu();         // Displays the teller main menu.
 private:
     QueueManager& queueManager;
     Statistics& stats;
     CustomerInterface& customerUI;
-    std::string& g_announcement;
+    std::map<std::string, int>& g_announcements;
 private:
     // ---------- Teller ----------
     void addCustomer();          // Collects data and adds a customer to the queue.

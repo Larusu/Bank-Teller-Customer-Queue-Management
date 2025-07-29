@@ -10,7 +10,7 @@ void AppController::run()
 
 	while (true)
 	{
-		cout << announcement;
+		printAnnouncements();
 		showMasterMainMenu();
 		choice = inputInteger("Enter Choice: ", choiceMin, choiceMax);
 		cout << endl;
@@ -35,4 +35,19 @@ void AppController::showMasterMainMenu()
 		cout << "├─────┼───────────────────────────────────────┤" << "\n";
 		cout << "│  3  │ Exit Bank                             │" << "\n";
 		cout << "└─────┴───────────────────────────────────────┘" << "\n";
+}
+
+void AppController::printAnnouncements()
+{
+	if(!announcements.empty())
+	{
+		int count = 1;
+		cout << "╔═════════════════════════════════════════════╗\n";
+		for(const auto& pair : announcements)
+		{
+			cout << "    " << count << "       Now serving Customer ID " << pair.second << endl;
+			count++;
+		}
+		cout << "╚═════════════════════════════════════════════╝\n";
+	}
 }
