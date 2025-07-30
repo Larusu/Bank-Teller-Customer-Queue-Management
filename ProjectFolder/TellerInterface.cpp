@@ -14,7 +14,7 @@ void TellerInterface::showTellerMenu()
 		cout << "┌─────────────────────────────────────────────┐" << "\n";
 		cout << "│                BANK TELLER                  │" << "\n";
 		cout << "├─────┬───────────────────────────────────────┤" << "\n";
-		cout << "│  1  │ Add New Customer                      │" << "\n";
+		cout << "│  1  │ Register New Customer                 │" << "\n";
 		cout << "├─────┼───────────────────────────────────────┤" << "\n";
 		cout << "│  2  │ Serve Next Customer                   │" << "\n";
 		cout << "├─────┼───────────────────────────────────────┤" << "\n";
@@ -28,7 +28,7 @@ void TellerInterface::showTellerMenu()
 		choice = inputInteger("Choice: ", choiceMin, choiceMax);
 		switch (choice)
 		{
-		case 1: addCustomer(); break;
+		case 1: registerCustomer(); break;
 		case 2: serveCustomer(); break;
 		case 3: clearScreen(); displayQueue(); break;
 		case 4: showStatistics(); break;
@@ -37,11 +37,15 @@ void TellerInterface::showTellerMenu()
 	}
 }
 
-void TellerInterface::addCustomer()
+void TellerInterface::registerCustomer()
 {
 	clearScreen();
 
+<<<<<<< HEAD
 	string lastName = "", firstName = "", fullName = "", transaction = "", bankId;
+=======
+	string name = "", bankId = "";
+>>>>>>> 597da51f5b37ef4f786b8c14950ecd3fd77a50e4
 	int age = 0, minAge = 18, maxAge = 99;
 	int choiceTransaction = 0, choiceMin = 1, choiceMax = 5;
 	double balance = 0, minBal = 500.0, maxBal = 10000000.0;
@@ -51,6 +55,7 @@ void TellerInterface::addCustomer()
 	cout << "║              Customer Details               ║" << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 
+<<<<<<< HEAD
 	lastName = inputString("Enter Last Name: ");
 	firstName = inputString("Enter First Name: ");
 
@@ -62,32 +67,12 @@ void TellerInterface::addCustomer()
 		return;
 	}
 
+=======
+	name = inputString("Enter Full Name: ");
+>>>>>>> 597da51f5b37ef4f786b8c14950ecd3fd77a50e4
 	age = inputInteger("Enter Age: ", minAge, maxAge);
 	balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
 	bankId = generateBankId();
-
-	cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
-	cout << "│  1  │ Account                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  2  │ Deposit                               │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  3  │ Withdraw                              │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  4  │ Transfer                              │" << "\n";
-	cout << "├─────┼───────────────────────────────────────┤" << "\n";
-	cout << "│  5  │ Payment                               │" << "\n";
-	cout << "└─────┴───────────────────────────────────────┘" << "\n";
-
-	choiceTransaction = inputInteger("Enter Transaction Type: ", choiceMin, choiceMax);
-
-	switch (choiceTransaction)
-	{
-	case 1: transaction = "Account"; break;
-	case 2: transaction = "Deposit"; break;
-	case 3: transaction = "Withdraw"; break;
-	case 4: transaction = "Transfer"; break;
-	case 5: transaction = "Payment"; break;
-	}
 
 	char choice = getYesNoChoice("Confirm adding customer? [Y - Yes | N - No]: ");
 
@@ -118,38 +103,32 @@ void TellerInterface::addCustomer()
                << balance << '\n';
     registered.close();
 	
+<<<<<<< HEAD
 	Customer c = queueManager.createCustomer(fullName, age, transaction, balance, bankId);
 	queueManager.addCustomer(c);
 	stats.recordService(c.estimatedServiceTime);
+=======
+    name = nameFormatter(name);
+    bankId = generateBankId(); 
+
+	string nameToTxt = "ID_";
+    for(char c : name)
+    {
+        nameToTxt += (isspace(c)) ? '_' : c;
+    }
+    nameToTxt += ".txt";
+
+	ofstream getBankId("customer_bank_id/" + nameToTxt);
+    getBankId << "Bank ID: " << bankId;
+    getBankId.close();
+>>>>>>> 597da51f5b37ef4f786b8c14950ecd3fd77a50e4
 
 	clearScreen();
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-	cout << "  🛈 Customer ID " << c.id << " has been added to the queue" << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
+	cout <<   "  🛈    Customer has been registered" << "\n";
+	cout <<   "╚═════════════════════════════════════════════╝" << "\n";
 }
-
-bool TellerInterface::isCustomerInQueueByName(const string& fullName)
-{
-	ifstream file("RegisteredCustomers.txt");
-	string line;
-	while (getline(file, line))
-	{
-		stringstream ss(line);
-		string bankId, name;
-		getline(ss, bankId, '|');
-		getline(ss, name, '|');
-
-		if (name == fullName)
-		{
-			file.close();
-			return queueManager.isInTheQueue(bankId);
-		}
-	}
-	file.close();
-	return false;
-}
-
 
 void TellerInterface::serveCustomer()
 {
@@ -166,7 +145,9 @@ void TellerInterface::serveCustomer()
 	customerUI.setWaitingForCompletion(customer);
 	clearScreen();
 
-	g_announcement = "╔═════════════════════════════════════════════╗\n   🛈       Now serving Customer ID " + to_string(customer.id) + "\n╚═════════════════════════════════════════════╝\n";
+	// Notify the customer that their id has been served
+    g_announcements[customer.bank.bankId] = customer.id;
+	
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout << "   🛈       Now serving Customer ID " << customer.id << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
@@ -188,7 +169,7 @@ void TellerInterface::displayQueue()
 	queueManager.displayQueue();
 	cout << "╚══════╩══════════════════════════════╩═══════╩═══════════════╩═════════╝\n";
 
-	char choice = getYesNoChoice("Serve Customer [ y - Yes | n - Exit ]: ");
+	char choice = getYesNoChoice("Serve Customer [Y - Yes | N - No]: ");
 
 	switch (choice) {
 	case 'y':
@@ -213,7 +194,7 @@ void TellerInterface::showStatistics()
 	{
 		length = queueManager.getCurrentQueueLength();
 		stats.displayStatistics(queueManager.getPeakQueueLength(length));
-		choice = getYesNoChoice("Do you want to exit [ Y - Yes | N - No ]: ");
+		choice = getYesNoChoice("Do you want to exit [Y - Yes | N - No]: ");
 
 		if (choice == 'y') {
 			clearScreen();

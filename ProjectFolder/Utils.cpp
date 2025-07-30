@@ -209,30 +209,30 @@ string Utils::generateBankId()
 	while(getline(registered, line))
 	{
 		stringstream ss(line); 
-
 		getline(ss, bankId, '|');
+		existingIds.insert(bankId);
 	}
 	registered.close();
 
-	srand(time(0)); 
-
 	string newCode;
-
 	do {
-        newCode = "";
-        while (newCode.length() < 7)
-        {
-            if (newCode.length() == 3)
-            {
-                newCode += '-';
-                continue;
-            }
-            char random = (rand() % 10) + '0';  
-            newCode += random;
-        }
+        newCode = Utils::generateRandomDigits(3) + '-' + Utils::generateRandomDigits(3);
     } while (existingIds.find(newCode) != existingIds.end());
 
 	return newCode;
+}
+
+string Utils::generateRandomDigits(int length)
+{
+	string code = "";
+
+	while(code.length() < length)
+	{
+		char random = (rand() % 9) + '1';  // 1 to 9
+		code += random;
+	}
+
+	return code;
 }
 
 string Utils::nameFormatter(const string& name)

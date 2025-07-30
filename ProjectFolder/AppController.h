@@ -6,13 +6,22 @@
 #include "TellerInterface.h"
 
 #include <iostream>
+#include <map>
+#include <ctime>
+
+// For file handling
+#include <sys/stat.h>
+#include <sys/types.h>
+#ifdef _WIN32
+#include <direct.h> 
+#endif
 
 // Handles the main application loop and menu navigation.
 class AppController
 {
 public:
     AppController()
-        : customerUI(queueManager, stats), tellerUI(queueManager, stats, announcement, customerUI)
+        : customerUI(queueManager, stats, announcements), tellerUI(queueManager, stats, announcements, customerUI)
     { }
 
     void run();  // Starts the application loop. Called from main().
@@ -22,7 +31,8 @@ private: // Private Attributes
     Statistics stats;            // Tracks and reports application statistics.
     CustomerInterface customerUI;
     TellerInterface tellerUI;
-    std::string announcement;
+    std::map<std::string, int> announcements;
 private: 
     void showMasterMainMenu();        // Displays the top-level master menu 
+    void printAnnouncements();
 };

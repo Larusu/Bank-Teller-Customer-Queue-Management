@@ -26,20 +26,14 @@ private: // Private Methods
     static double subtract(double x, double y);
 
 public: // Public Methods
-    // ---------- Customer Creation ----------
-    Customer createCustomer(
-        const std::string& name,
-        int age,
-        const std::string& transactionType,
-        double balance
-    );                                              // Creates and returns a new Customer object.
+    // ---------- Customer Creation ----------        
     Customer createCustomer(
         const std::string& name, 
         int age, 
         const std::string& transactionType, 
         double balance, 
         const std::string& bankID
-    );
+    ); // Creates and returns a new Customer object.
 
     // ---------- Queue Management ----------
     void addCustomer(const Customer& newCustomer);  // Adds a new customer to the queue.
