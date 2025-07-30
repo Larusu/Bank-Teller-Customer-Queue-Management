@@ -41,11 +41,7 @@ void TellerInterface::registerCustomer()
 {
 	clearScreen();
 
-<<<<<<< HEAD
 	string lastName = "", firstName = "", fullName = "", transaction = "", bankId;
-=======
-	string name = "", bankId = "";
->>>>>>> 597da51f5b37ef4f786b8c14950ecd3fd77a50e4
 	int age = 0, minAge = 18, maxAge = 99;
 	int choiceTransaction = 0, choiceMin = 1, choiceMax = 5;
 	double balance = 0, minBal = 500.0, maxBal = 10000000.0;
@@ -55,7 +51,6 @@ void TellerInterface::registerCustomer()
 	cout << "║              Customer Details               ║" << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-<<<<<<< HEAD
 	lastName = inputString("Enter Last Name: ");
 	firstName = inputString("Enter First Name: ");
 
@@ -67,9 +62,6 @@ void TellerInterface::registerCustomer()
 		return;
 	}
 
-=======
-	name = inputString("Enter Full Name: ");
->>>>>>> 597da51f5b37ef4f786b8c14950ecd3fd77a50e4
 	age = inputInteger("Enter Age: ", minAge, maxAge);
 	balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
 	bankId = generateBankId();
@@ -103,31 +95,32 @@ void TellerInterface::registerCustomer()
                << balance << '\n';
     registered.close();
 	
-<<<<<<< HEAD
-	Customer c = queueManager.createCustomer(fullName, age, transaction, balance, bankId);
-	queueManager.addCustomer(c);
-	stats.recordService(c.estimatedServiceTime);
-=======
-    name = nameFormatter(name);
-    bankId = generateBankId(); 
-
-	string nameToTxt = "ID_";
-    for(char c : name)
-    {
-        nameToTxt += (isspace(c)) ? '_' : c;
-    }
-    nameToTxt += ".txt";
-
-	ofstream getBankId("customer_bank_id/" + nameToTxt);
-    getBankId << "Bank ID: " << bankId;
-    getBankId.close();
->>>>>>> 597da51f5b37ef4f786b8c14950ecd3fd77a50e4
-
 	clearScreen();
 
 	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
 	cout <<   "  🛈    Customer has been registered" << "\n";
 	cout <<   "╚═════════════════════════════════════════════╝" << "\n";
+}
+
+bool TellerInterface::isCustomerInQueueByName(const string& fullName)
+{
+	ifstream file("RegisteredCustomers.txt");
+	string line;
+	while (getline(file, line))
+	{
+		stringstream ss(line);
+		string bankId, name;
+		getline(ss, bankId, '|');
+		getline(ss, name, '|');
+
+		if (name == fullName)
+		{
+			file.close();
+			return queueManager.isInTheQueue(bankId);
+		}
+	}
+	file.close();
+	return false;
 }
 
 void TellerInterface::serveCustomer()
