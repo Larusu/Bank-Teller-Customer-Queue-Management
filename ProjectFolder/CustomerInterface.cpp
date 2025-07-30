@@ -269,6 +269,7 @@ void CustomerInterface::completeTransaction()
         // Check if the user is still in the queue
         if(queueManager.isInTheQueue(userBankId))
         {
+            clearScreen();
             cout << "\n╔═════════════════════════════════════════════╗" << "\n";
             cout <<   "  🛈 You are still in the queue. Please wait." << "\n";
             cout <<   "╚═════════════════════════════════════════════╝" << "\n";
@@ -278,6 +279,7 @@ void CustomerInterface::completeTransaction()
         // Check if the user has a completed transaction waiting
         if(!isInTheWaitingList(userBankId))
         {
+            clearScreen();
             cout << "\n╔═════════════════════════════════════════════╗" << "\n";
             cout <<   "       ⚠️     No transaction found.            " << "\n";
             cout <<   "╚═════════════════════════════════════════════╝" << "\n";

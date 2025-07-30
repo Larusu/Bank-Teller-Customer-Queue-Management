@@ -16,18 +16,16 @@ public:
     TellerInterface(QueueManager& queueManager, Statistics& stats, std::map<std::string, int>& announce, CustomerInterface& customerUI)
        : queueManager(queueManager), stats(stats), g_announcements(announce), customerUI(customerUI)
     { }
-    void showTellerMenu();         // Displays the teller main menu.
+    void showTellerMenu();            // Displays the teller main menu.
 private:
-    QueueManager& queueManager;
-    Statistics& stats;
-    CustomerInterface& customerUI;
-    std::map<std::string, int>& g_announcements;
+    QueueManager& queueManager;                  // For handling customer queue
+    Statistics& stats;                           // For displaynig statistics
+    CustomerInterface& customerUI;               // To add serve customer for customer side
+    std::map<std::string, int>& g_announcements; // Handles adding of announcement
 private:
     // ---------- Teller ----------
     void registerCustomer();          // Collects data and adds a customer to the queue.
-    void serveCustomer();        // Serves the next customer in the queue.
-    void displayQueue();         // Displays current queue of customers.
-    void showStatistics();       // Displays statistics like served customers, transaction counts, etc.
-
-    bool isCustomerInQueueByName(const std::string& fullName);
+    void serveCustomer();             // Serves the next customer in the queue.
+    void displayQueue();              // Displays current queue of customers.
+    void showStatistics();            // Displays statistics like served customers, transaction counts, etc.
 };
