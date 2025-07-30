@@ -3,7 +3,6 @@
 using namespace Utils;
 using namespace std;
 
-// ---------- Utility / Internal Helpers ----------
 bool QueueManager::isVip(const string& name)
 {
 	ifstream vipFile;
@@ -20,7 +19,6 @@ bool QueueManager::isVip(const string& name)
 	return false;
 }
 
-// ---------- Customer Creation & Lookup ----------
 bool QueueManager::isInTheQueue(const string& bankId)
 {
 	queue<Customer>current = regularQueue;
@@ -60,7 +58,6 @@ Customer QueueManager::createCustomer(const string& name, int age, const string&
 	return c;
 }
 
-// ---------- Queue Management ----------
 void QueueManager::addCustomer(const Customer& newCustomer)
 {
 	queue<Customer> newQueue;
@@ -143,7 +140,6 @@ int QueueManager::getPeakQueueLength(int currentQueueLength)
 	return peakQueueLength;
 }
 
-// ---------- Transactions ----------
 void QueueManager::depositMoney(double amount, const string& bankId)
 {
 	// Change file balance

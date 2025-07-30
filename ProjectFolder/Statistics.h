@@ -12,14 +12,14 @@ class Statistics
 public:
     Statistics()
     {
-        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleOutputCP(CP_UTF8);                // Enables UTF-8 output in Windows console
     }
     void recordService(int serviceTime);            // Records the time taken for a served customer.
     void displayStatistics(int peakQueueLength);    // Displays current statistics summary.
     double getAverageServiceTime();                 // Returns average service time.
     int getTotalCustomersServed();                  // Returns total number of customers served.
-    void setTotalServed();
-    void recordCompleted();
+    void setTotalServed();                          // Increments the total number of served customers by one.
+    void recordCompleted();                         // Records a completed transaction by incrementing totalServed.
 
 private:
     int totalCustomersServed = 0;

@@ -2,32 +2,54 @@
 
 using namespace std;
 
-int Utils::estimateServiceTime(const string& transactionType)
-{
-	string upper = Utils::trim(Utils::toUpper(transactionType));
-	if (upper == "TRANSFER")return 6;   // 6 minutes - Transfers need account confirmation and possible approvals
-	if (upper == "WITHDRAW")return 5;   // 5 minutes - Withdrawals take longer due to cash handling & verification
-	if (upper == "PAYMENT") return 4;   // 4 minutes - Payments (bills, cards) are usually the quickest 
-	if (upper == "DEPOSIT") return 3;   // 3 minutes - Deposits are relatively fast, just counting and logging
-	if (upper == "ACCOUNT") return 2;	// 2 minutes - Account checking for accessing their details
-	return 0;
-}
-
-void Utils::clearScreen()
-{
-#ifndef WINDOWS
-	system("cls");
-#else
-	system("clear");
-#endif
-}
-
 string Utils::toUpper(const string& str)
 {
 	string copy = str;
 	transform(copy.begin(), copy.end(), copy.begin(), ::toupper);
 
 	return copy;
+}
+
+string Utils::trim(const std::string& str) 
+{
+	auto start = find_if_not(str.begin(), str.end(), ::isspace);
+	auto end = find_if_not(str.rbegin(), str.rend(), ::isspace).base();
+
+	return string(start, end);
+}
+
+string Utils::formatMoney(double amount) 
+{
+    stringstream ss;
+    ss << fixed << setprecision(2) << amount;
+    return ss.str();
+}
+
+string Utils::nameFormatter(const string& name)
+{
+	string newName;
+	bool firstLetter = true;
+
+	for (char n : Utils::trim(name))
+	{
+		if (firstLetter)
+		{
+			newName += toupper(n);
+			firstLetter = false;
+			continue;
+		}
+
+		if (isspace(n))
+		{
+			newName += " ";
+			firstLetter = true;
+			continue;
+		}
+
+		newName += tolower(n);
+	}
+
+	return newName;
 }
 
 int Utils::inputInteger(const string& prompt, int min, int max)
@@ -50,6 +72,34 @@ int Utils::inputInteger(const string& prompt, int min, int max)
 		if (input < min || input > max)
 		{
 			cout << "Input must be between " << min << " and " << max << ". Please try again.\n> ";
+			continue;
+		}
+
+		return input;
+	}
+}
+
+double Utils::inputDouble(const string& prompt, double min, double max)
+{
+	double input;
+
+	while (true)
+	{
+		cout << prompt;
+
+		if (!(cin >> input))
+		{
+			cin.clear();                  // Clear the error flag
+			cin.ignore(1000, '\n');       // Discard bad input
+			cout << "Invalid input. Please enter a numeric value.\n";
+			continue;
+		}
+
+		cin.ignore(1000, '\n');           // Clear newline left in buffer
+
+		if (input < min || input > max)
+		{
+			cout << "Input must be between " << min << " and " << max << ". Please try again.\n";
 			continue;
 		}
 
@@ -112,31 +162,20 @@ char Utils::inputChar(const string& prompt)
 	return tolower(input);
 }
 
-double Utils::inputDouble(const string& prompt, double min, double max)
+char Utils::getYesNoChoice(const string& prompt)
 {
-	double input;
+	char input;
 
 	while (true)
 	{
-		cout << prompt;
+		input = Utils::inputChar(prompt);
 
-		if (!(cin >> input))
+		if (tolower(input) != 'y' && tolower(input) != 'n')
 		{
-			cin.clear();                  // Clear the error flag
-			cin.ignore(1000, '\n');       // Discard bad input
-			cout << "Invalid input. Please enter a numeric value.\n";
+			cout << "Must be Y or N only! Please try again.\n> ";
 			continue;
 		}
-
-		cin.ignore(1000, '\n');           // Clear newline left in buffer
-
-		if (input < min || input > max)
-		{
-			cout << "Input must be between " << min << " and " << max << ". Please try again.\n";
-			continue;
-		}
-
-		return input;
+		return tolower(input);
 	}
 }
 
@@ -171,32 +210,6 @@ string Utils::inputBankId(const string& prompt)
 		}
 
 		cout << "Input cannot be empty. Please try again.\n> ";
-	}
-}
-
-
-string Utils::trim(const std::string& str) 
-{
-	auto start = find_if_not(str.begin(), str.end(), ::isspace);
-	auto end = find_if_not(str.rbegin(), str.rend(), ::isspace).base();
-
-	return string(start, end);
-}
-
-char Utils::getYesNoChoice(const string& prompt)
-{
-	char input;
-
-	while (true)
-	{
-		input = Utils::inputChar(prompt);
-
-		if (tolower(input) != 'y' && tolower(input) != 'n')
-		{
-			cout << "Must be Y or N only! Please try again.\n> ";
-			continue;
-		}
-		return tolower(input);
 	}
 }
 
@@ -235,36 +248,23 @@ string Utils::generateRandomDigits(int length)
 	return code;
 }
 
-string Utils::nameFormatter(const string& name)
+int Utils::estimateServiceTime(const string& transactionType)
 {
-	string newName;
-	bool firstLetter = true;
-
-	for (char n : Utils::trim(name))
-	{
-		if (firstLetter)
-		{
-			newName += toupper(n);
-			firstLetter = false;
-			continue;
-		}
-
-		if (isspace(n))
-		{
-			newName += " ";
-			firstLetter = true;
-			continue;
-		}
-
-		newName += tolower(n);
-	}
-
-	return newName;
+	string upper = Utils::trim(Utils::toUpper(transactionType));
+	if (upper == "TRANSFER")return 6;   // 6 minutes - Transfers need account confirmation and possible approvals
+	if (upper == "WITHDRAW")return 5;   // 5 minutes - Withdrawals take longer due to cash handling & verification
+	if (upper == "PAYMENT") return 4;   // 4 minutes - Payments (bills, cards) are usually the quickest 
+	if (upper == "DEPOSIT") return 3;   // 3 minutes - Deposits are relatively fast, just counting and logging
+	if (upper == "ACCOUNT") return 2;	// 2 minutes - Account checking for accessing their details
+	return 0;
 }
 
-string Utils::formatMoney(double amount) 
+void Utils::clearScreen()
 {
-    stringstream ss;
-    ss << fixed << setprecision(2) << amount;
-    return ss.str();
+#ifndef WINDOWS
+	system("cls");
+#else
+	system("clear");
+#endif
 }
+
