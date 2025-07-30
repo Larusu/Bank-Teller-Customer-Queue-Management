@@ -3,6 +3,11 @@
 using namespace Utils;
 using namespace std;
 
+void Statistics::recordCompleted()
+{
+	totalServed++;
+}
+
 void Statistics::recordService(int serviceTime)
 {
 	totalCustomersServed++;

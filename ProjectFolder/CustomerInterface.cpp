@@ -276,6 +276,8 @@ void CustomerInterface::completeTransaction()
 	else if (transactionType == "Transfer")	transfer(handleTransaction);
 	else if (transactionType == "Payment")	payment(handleTransaction);
 
+    stats.recordCompleted();
+
     clearScreen();
     cout << "\n╔═════════════════════════════════════════════╗" << "\n";
     cout <<   "      Thank you for using JRL Bank Teller      " << "\n";
@@ -299,48 +301,59 @@ void CustomerInterface::account(const Customer &customer)
 
     string formattedName = firstName + "'s Details";
 
-    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║               " << left << setw(30) << formattedName << "║" << "\n";
-    cout << "╠═════════════════════════════════════════════╣" << "\n";
-    cout << "║ Full Name: " << left << setw(33) << customer.name << "║" << '\n';
-    cout << "║ Age:        " << left << setw(32) << customer.age << "║" << '\n';
-    cout << "║ Balance:    " << setw(32) << left << fixed << setprecision(2) << customer.bank.balance << "║" << '\n';
-    cout << "║ Bank ID:    " << left << setw(32) << customer.bank.bankId << "║" << '\n';
-    cout << "╚═════════════════════════════════════════════╝" << "\n";
+    while (true)
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout << "║               " << left << setw(30) << formattedName << "║" << "\n";
+        cout << "╠═════════════════════════════════════════════╣" << "\n";
+        cout << "║ Full Name: " << left << setw(33) << customer.name << "║" << '\n';
+        cout << "║ Age:        " << left << setw(32) << customer.age << "║" << '\n';
+        cout << "║ Balance:    " << setw(32) << left << fixed << setprecision(2) << customer.bank.balance << "║" << '\n';
+        cout << "║ Bank ID:    " << left << setw(32) << customer.bank.bankId << "║" << '\n';
+        cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-    printTransactionReceipt(customer, "Account Info");
+        printTransactionReceipt(customer, "Account Info");
 
-    if (handleExitPrompt()) return;
-    showCustomerMenu();
+        if (handleExitPrompt()) return;
+    }
 }
 
 void CustomerInterface::deposit(const Customer &customer)
 {
     clearScreen();
-
+    
     string firstName = getFirstName(customer.name);
 	string bankId = customer.bank.bankId;
 	double depositAmount, minDeposit = 500.0, maxDeposit = 10000000.0;
+    bool ask = true;
 
     string formattedName = firstName + "'s Depositing";
 
-    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-    cout << "╚═════════════════════════════════════════════╝" << "\n";
-    depositAmount = inputDouble("Deposit Amount: ", minDeposit, maxDeposit);
-
-    queueManager.depositMoney(depositAmount, bankId);
+    while (true)
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout << "╚═════════════════════════════════════════════╝" << "\n";
+        if (ask)
+        {
+            depositAmount = inputDouble("Deposit Amount: ", minDeposit, maxDeposit);
+            queueManager.depositMoney(depositAmount, bankId);
+            
+            stringstream depositLabel, newBalanceLabel, lineDiv;
+            depositLabel << left << setw(16) << "Deposited: " << right << setw(25) << formatMoney(depositAmount);
+            newBalanceLabel << left << setw(16) << "New Balance: " << right << setw(25) << formatMoney(depositAmount + customer.bank.balance);
+            lineDiv << "- - - - - - - - - - - - - - - - - - - - -";
     
-    stringstream depositLabel, newBalanceLabel;
-    depositLabel << left << setw(16) << "Deposited: " << right << setw(25) << formatMoney(depositAmount);
-    newBalanceLabel << left << setw(16) << "New Balance: " << right << setw(25) << formatMoney(depositAmount + customer.bank.balance);
-    printTransactionReceipt(customer, "Deposit", {
-        depositLabel.str(),
-        newBalanceLabel.str()
-    });
+            printTransactionReceipt(customer, "Deposit", {
+                depositLabel.str(),
+                newBalanceLabel.str(),
+                lineDiv.str()
+            });
+        } 
 
-    if (handleExitPrompt()) return;
-    showCustomerMenu();
+        if (handleExitPrompt()) return;
+        ask = false;
+    }
 }
 
 void CustomerInterface::withdraw(const Customer &customer)
@@ -350,29 +363,39 @@ void CustomerInterface::withdraw(const Customer &customer)
     string firstName = getFirstName(customer.name);
 	string bankId = customer.bank.bankId;
 	double withdrawAmount, minWithdraw = 0, maxWithdraw = customer.bank.balance;
+    bool ask = true;
 
     string formattedName = firstName + "'s Withdrawing";
 
-    cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-    cout << "╚═════════════════════════════════════════════╝" << "\n";
-    cout << "Available balance: " << maxWithdraw << endl;
-    withdrawAmount = inputDouble("Withdraw Amount: ", minWithdraw, maxWithdraw);
+    while (true) 
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout << "╚═════════════════════════════════════════════╝" << "\n";
+        
+        if (ask)
+        {
+            cout << "Available balance: " << maxWithdraw << endl;
+            withdrawAmount = inputDouble("Withdraw Amount: ", minWithdraw, maxWithdraw);
 
-    queueManager.deductFromBalance(withdrawAmount, bankId);
+            queueManager.deductFromBalance(withdrawAmount, bankId);
 
-    stringstream withdrawLabel, remainingLabel;
+            stringstream withdrawLabel, remainingLabel, lineDiv;
 
-    withdrawLabel << left << setw(16) << "Withdrawn:" << right << setw(25) << formatMoney(withdrawAmount);
-    remainingLabel << left << setw(16) << "Remaining Balance:" << right << setw(23) << formatMoney(customer.bank.balance - withdrawAmount);
+            withdrawLabel << left << setw(16) << "Withdrawn:" << right << setw(25) << formatMoney(withdrawAmount);
+            remainingLabel << left << setw(16) << "Remaining Balance:" << right << setw(23) << formatMoney(customer.bank.balance - withdrawAmount);
+            lineDiv << "- - - - - - - - - - - - - - - - - - - - -";
 
-    printTransactionReceipt(customer, "Withdraw", {
-        withdrawLabel.str(),
-        remainingLabel.str()
-    });
+            printTransactionReceipt(customer, "Withdraw", {
+                withdrawLabel.str(),
+                remainingLabel.str(),
+                lineDiv.str()
+            });
+        }
 
-    if (handleExitPrompt()) return;
-    showCustomerMenu();
+        if (handleExitPrompt()) return;
+        ask = false;
+    }
 }
 
 void CustomerInterface::transfer(const Customer &customer)
@@ -384,70 +407,80 @@ void CustomerInterface::transfer(const Customer &customer)
 	string recipientId;
 	double transferAmount, minTransfer = 0, maxTransfer = customer.bank.balance;
 	char choice;
+    bool ask = true;
 
     string formattedName = firstName + "'s Transferring";
 
-	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
-	cout << "Available balance: " << maxTransfer << endl;
-
-    // Ask for recipient's Bank ID, max 3 attempts
-    int attempts = 0;
-    const int maxAttempts = 3;
-    while(attempts < maxAttempts)
+    while (true)
     {
-        recipientId = inputBankId("Enter recipient's Bank ID: ");
-        
-        // Prevent transferring to own account
-        if(recipientId == bankId)
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout << "╚═════════════════════════════════════════════╝" << "\n";
+
+        if (ask) 
         {
-            cout << "You cannot transfer into your own account. Please try again!\n";
-            continue;
-        }
+            cout << "Available balance: " << maxTransfer << endl;
 
-        // Check if recipient's Bank ID exists
-        if(!isBankIdRegistered(recipientId))
-        {
-            attempts++;
-            int remainingTries = maxAttempts - attempts;
-
-            cout << "Recipient's Bank ID doesn't exist. " << remainingTries << " attempt(s) left.\n";
-
-            if (attempts == maxAttempts)
+            // Ask for recipient's Bank ID, max 3 attempts
+            int attempts = 0;
+            const int maxAttempts = 3;
+            while(attempts < maxAttempts)
             {
-                waitingForCompletion.push_back(customer);
-                clearScreen();
-                cout << "\nToo many failed attempts. Returning to menu.\n";
-                return;
+                recipientId = inputBankId("Enter recipient's Bank ID: ");
+                
+                // Prevent transferring to own account
+                if(recipientId == bankId)
+                {
+                    cout << "You cannot transfer into your own account. Please try again!\n";
+                    continue;
+                }
+
+                // Check if recipient's Bank ID exists
+                if(!isBankIdRegistered(recipientId))
+                {
+                    attempts++;
+                    int remainingTries = maxAttempts - attempts;
+
+                    cout << "Recipient's Bank ID doesn't exist. " << remainingTries << " attempt(s) left.\n";
+
+                    if (attempts == maxAttempts)
+                    {
+                        waitingForCompletion.push_back(customer);
+                        clearScreen();
+                        cout << "\nToo many failed attempts. Returning to menu.\n";
+                        return;
+                    }
+
+                    continue;
+                }
+
+                break; // Valid recipient ID
             }
 
-            continue;
+            transferAmount = inputDouble("Transfer Amount: ", minTransfer, maxTransfer);
+
+            // Perform money transfer via QueueManager
+            queueManager.transferMoney(transferAmount, bankId, recipientId);
+
+            // Print transaction receipt to file
+            stringstream transferredLabel, recipientLabel, remainingLabel, lineDiv;
+
+            transferredLabel << left << setw(16) << "Transferred:" << right << setw(25) << formatMoney(transferAmount);
+            recipientLabel << left << setw(16) << "Recipient ID:" << right << setw(25) << recipientId;
+            remainingLabel << left << setw(16) << "Remaining:" << right << setw(25) << formatMoney(customer.bank.balance - transferAmount);
+            lineDiv << "- - - - - - - - - - - - - - - - - - - - -";
+
+            printTransactionReceipt(customer, "Transfer", {
+                transferredLabel.str(),
+                recipientLabel.str(),
+                remainingLabel.str(),
+                lineDiv.str()
+            });
         }
-
-        break; // Valid recipient ID
+        
+        if (handleExitPrompt()) return;
+        ask = false;
     }
-
-    transferAmount = inputDouble("Transfer Amount: ", minTransfer, maxTransfer);
-
-    // Perform money transfer via QueueManager
-    queueManager.transferMoney(transferAmount, bankId, recipientId);
-
-    // Print transaction receipt to file
-    stringstream transferredLabel, recipientLabel, remainingLabel;
-
-    transferredLabel << left << setw(16) << "Transferred:" << right << setw(25) << formatMoney(transferAmount);
-    recipientLabel << left << setw(16) << "Recipient ID:" << right << setw(25) << recipientId;
-    remainingLabel << left << setw(16) << "Remaining:" << right << setw(25) << formatMoney(customer.bank.balance - transferAmount);
-
-    printTransactionReceipt(customer, "Transfer", {
-        transferredLabel.str(),
-        recipientLabel.str(),
-        remainingLabel.str()
-    });
-
-    if (handleExitPrompt()) return;
-    showCustomerMenu();
 }
 
 void CustomerInterface::payment(const Customer &customer)
@@ -458,33 +491,42 @@ void CustomerInterface::payment(const Customer &customer)
 	string bankId = customer.bank.bankId;
 	string paymentPurpose = "";
 	double paymentAmount, minPayment = 0, maxPayment = customer.bank.balance;
+    bool ask = true;
 
     string formattedName = firstName + "'s Payment";
 
-	cout << "\n╔═════════════════════════════════════════════╗" << "\n";
-    cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
-	cout << "╚═════════════════════════════════════════════╝" << "\n";
-	cout << "Available balance: " << maxPayment << endl;
-	paymentPurpose = inputString("Enter Purpose of Payment: ");
-	paymentAmount = inputDouble("Payment Amount: ", minPayment, maxPayment);
+    while (true)
+    {
+        cout << "\n╔═════════════════════════════════════════════╗" << "\n";
+        cout << "║             " << left << setw(32) << formattedName << "║" << "\n";
+        cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-	queueManager.deductFromBalance(paymentAmount, bankId);
+        if (ask)
+            {
+            cout << "Available balance: " << maxPayment << endl;
+            paymentPurpose = inputString("Enter Purpose of Payment: ");
+            paymentAmount = inputDouble("Payment Amount: ", minPayment, maxPayment);
 
-    stringstream paymentLabel, purposeLabel, remainingLabel;
+            queueManager.deductFromBalance(paymentAmount, bankId);
 
-    paymentLabel << left << setw(16) << "Payment:" << right << setw(25) << formatMoney(paymentAmount);
-    purposeLabel << left << setw(16) << "To:" << right << setw(25) << paymentPurpose;
-    remainingLabel << left << setw(16) << "Remaining:" << right << setw(25) << formatMoney(customer.bank.balance - paymentAmount);
+            stringstream paymentLabel, purposeLabel, remainingLabel, lineDiv;
 
-    printTransactionReceipt(customer, "Deposit", {
-        paymentLabel.str(),
-        purposeLabel.str(),
-        remainingLabel.str()
-    });
+            paymentLabel << left << setw(16) << "Payment:" << right << setw(25) << formatMoney(paymentAmount);
+            purposeLabel << left << setw(16) << "To:" << right << setw(25) << paymentPurpose;
+            remainingLabel << left << setw(16) << "Remaining:" << right << setw(25) << formatMoney(customer.bank.balance - paymentAmount);
+            lineDiv << "- - - - - - - - - - - - - - - - - - - - -";
 
+            printTransactionReceipt(customer, "Deposit", {
+                paymentLabel.str(),
+                purposeLabel.str(),
+                remainingLabel.str(),
+                lineDiv.str()
+            });
+        }
 
-	if (handleExitPrompt()) return;
-    showCustomerMenu();
+        if (handleExitPrompt()) return;
+        ask = false;
+    }
 }
 
 bool CustomerInterface::isBankIdRegistered(const string& bankId)

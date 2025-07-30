@@ -19,7 +19,8 @@ public:
     double getAverageServiceTime();                 // Returns average service time.
     int getTotalCustomersServed();                  // Returns total number of customers served.
     void setTotalServed();
-    
+    void recordCompleted();
+
 private:
     int totalCustomersServed = 0;
     int totalServiceTime = 0;

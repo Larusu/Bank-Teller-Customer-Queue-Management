@@ -41,7 +41,7 @@ void TellerInterface::addCustomer()
 {
 	clearScreen();
 
-	string name = "", transaction = "";
+	string lastName = "", firstName = "", fullName = "", transaction = "", bankId;
 	int age = 0, minAge = 18, maxAge = 99;
 	int choiceTransaction = 0, choiceMin = 1, choiceMax = 5;
 	double balance = 0, minBal = 500.0, maxBal = 10000000.0;
@@ -51,9 +51,12 @@ void TellerInterface::addCustomer()
 	cout << "║              Customer Details               ║" << "\n";
 	cout << "╚═════════════════════════════════════════════╝" << "\n";
 
-	name = inputString("Enter Full Name: ");
+	lastName = inputString("Enter Last Name: ");
+	firstName = inputString("Enter First Name: ");
 
-	if(isCustomerInQueueByName(nameFormatter(name)))
+	fullName = firstName + " " + lastName;
+
+	if(isCustomerInQueueByName(nameFormatter(fullName)))
 	{
 		cout << "Customer is currently in the queue.\n";
 		return;
@@ -61,6 +64,7 @@ void TellerInterface::addCustomer()
 
 	age = inputInteger("Enter Age: ", minAge, maxAge);
 	balance = inputDouble("Enter Initial Deposit: ", minBal, maxBal);
+	bankId = generateBankId();
 
 	cout << "┌─────┬─────── Transaction Types ─────────────┐" << "\n";
 	cout << "│  1  │ Account                               │" << "\n";
@@ -87,9 +91,34 @@ void TellerInterface::addCustomer()
 
 	char choice = getYesNoChoice("Confirm adding customer? [Y - Yes | N - No]: ");
 
-	if(choice == 'n') return;
+	if (choice == 'n') {
+		clearScreen(); 
+		return;
+	}
+
+	string nameToTxt = "ID_";
+
+    for(char c : fullName)
+    {
+        nameToTxt += (isspace(c)) ? '_' : c;
+    }
+    nameToTxt += ".txt";
+
+    // Write bank ID to receipt file
+    ofstream getBankId(nameToTxt);
+    getBankId << "Bank ID: " << bankId;
+    getBankId.close();
+
+    // Save customer info to RegisteredCustomers file 
+    ofstream registered;
+    registered.open("RegisteredCustomers.txt", ios::app);
+    registered << bankId << "|"
+               << fullName << "|"
+               << age << "|"
+               << balance << '\n';
+    registered.close();
 	
-	Customer c = queueManager.createCustomer(name, age, transaction, balance);
+	Customer c = queueManager.createCustomer(fullName, age, transaction, balance, bankId);
 	queueManager.addCustomer(c);
 	stats.recordService(c.estimatedServiceTime);
 
