@@ -458,10 +458,8 @@ void CustomerInterface::transfer(const Customer &customer)
         {
             cout << "Available balance: " << maxTransfer << endl;
 
-            // Ask for recipient's Bank ID, max 3 attempts
-            int attempts = 0;
-            const int maxAttempts = 3;
-            while(attempts < maxAttempts)
+            // Ask for recipient's Bank ID
+            while(true)
             {
                 recipientId = inputBankId("Enter recipient's Bank ID: ");
                 
@@ -469,25 +467,6 @@ void CustomerInterface::transfer(const Customer &customer)
                 if(recipientId == bankId)
                 {
                     cout << "You cannot transfer into your own account. Please try again!\n";
-                    continue;
-                }
-
-                // Check if recipient's Bank ID exists
-                if(!isBankIdRegistered(recipientId))
-                {
-                    attempts++;
-                    int remainingTries = maxAttempts - attempts;
-
-                    cout << "Recipient's Bank ID doesn't exist. " << remainingTries << " attempt(s) left.\n";
-
-                    if (attempts == maxAttempts)
-                    {
-                        waitingForCompletion.push_back(customer);
-                        clearScreen();
-                        cout << "\nToo many failed attempts. Returning to menu.\n";
-                        return;
-                    }
-
                     continue;
                 }
 
