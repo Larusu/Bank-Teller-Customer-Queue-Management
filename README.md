@@ -1,8 +1,11 @@
-# BankQueue
+# 🏦 BankQueue
 
-A C++ command-line application for managing bank teller customer queues. Features dual interfaces for both customers and tellers, with queue management, transaction handling, and statistics tracking.
+**BankQueue** is a C++ command-line application that simulates a bank teller queue system.  
+It features separate interfaces for customers and tellers, along with queue management, transaction handling, and statistics tracking.
 
-## Features
+This project was developed as the **final project for Data Structures and Algorithms**, focusing on queue management, file handling, and modular program design.
+
+## ✨ Features
 
 - **Dual Interface**: Separate menus for customers and tellers
 - **Queue Management**: Regular and VIP customer queues with priority handling
@@ -12,14 +15,31 @@ A C++ command-line application for managing bank teller customer queues. Feature
 - **Receipt Generation**: Automatic transaction receipts with timestamps
 - **Data Persistence**: Customer data stored in text files
 
-## What It Does
+## 🧠 What It Does
 
-BankQueue simulates a bank teller system where:
-- Customers can register, join queue, and perform transactions
-- Tellers can serve next customers, view queue, and manage customer accounts
-- The system tracks statistics and generates receipts for each transaction
+BankQueue simulates the workflow of a small bank teller system.
 
-## Building
+- Customers can **register**, **join the queue**, and **perform transactions**.
+- Tellers can **serve customers**, **monitor queues**, and **manage customer accounts**.
+- The system records **statistics** and generates **receipts** for each transaction.
+
+This project demonstrates the use of **queues**, **file handling**, and **modular program design** in C++.
+
+## 🧠 Concepts Demonstrated
+
+- Queue data structures  
+- Priority queue handling  
+- File input/output  
+- Object-oriented programming  
+- Modular program design  
+- Command-line interfaces
+
+## 📦 Requirements
+
+- C++17 compatible compiler
+- Linux, macOS, or Windows operating system  
+
+## 🏗️ Building
 
 ### Linux/macOS
 
@@ -35,7 +55,7 @@ cmake ..
 cmake --build .
 ```
 
-## Running
+## ▶️ Running
 
 ### Linux/macOS
 
@@ -54,7 +74,7 @@ make run
 ./bank_teller.exe
 ```
 
-## File Structure
+## 🗂️ File Structure
 
 ```
 /
@@ -84,8 +104,8 @@ make run
     ├── vip_names.txt
     └── RegisteredCustomers.txt
 ```
+## 🚀 Future Improvements
 
-## Requirements
-
-- C++17 compatible compiler
-- Linux or Windows OS
+- Store data using a database instead of text files
+- Implement real-time queue updates
+- Add transaction history search
