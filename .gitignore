@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+bank_teller
 
 # Build Directories
 Debug/

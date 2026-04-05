@@ -3,7 +3,9 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include "Utils.h"
 
 // Tracks statistics like total customers served and average time.
@@ -12,7 +14,9 @@ class Statistics
 public:
     Statistics()
     {
-        SetConsoleOutputCP(CP_UTF8);                // Enables UTF-8 output in Windows console
+        #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+        #endif
     }
     void recordService(int serviceTime);            // Records the time taken for a served customer.
     void displayStatistics(int peakQueueLength);    // Displays current statistics summary.
